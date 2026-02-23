@@ -1,0 +1,7 @@
+Loaded 86 patterns
+Compressing: .\data\ERR15993673_5000.seq.txt
+
+Compression completed
+Sequences processed : 5000
+Compression ratio   : 34.46%
+Output file         : .\data\ERR15993673_5000_chatgpt.seq.compress
