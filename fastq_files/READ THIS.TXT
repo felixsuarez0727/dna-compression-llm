@@ -1,0 +1,3 @@
+Download the testing files from: https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&acc=ERR15993673
+
+Then place the FASTQ file alone in this folder: /fastq_files
