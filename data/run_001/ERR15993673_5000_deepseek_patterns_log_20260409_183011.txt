@@ -1,0 +1,116 @@
+
+========================================================
+  FASTQ Pattern Detector  [deepseek]
+========================================================
+  File       : .\data\ERR15993673_5000.seq.txt
+  Model      : deepseek-chat
+  Batch size : 80
+  Overhead   : 101
+  Threads    : 8
+  Log file   : data/ERR15993673_5000_deepseek_patterns_log_20260409_183011.txt
+  Output     : .\data\ERR15993673_5000_deepseek_patterns.json
+========================================================
+
+Loading sequences...
+5000 sequences loaded
+
+K-mer pre-analysis...
+k=4: CTAC(16852), CCGC(14930), GTAA(14430)
+k=8: GAAGAAGG(4925), TGAAGAAG(4920), GTGAAGAA(4919)
+k=12: AGTAGGGAATCT(2473), GTAGGGAATCTT(2473), TAGGGAATCTTC(2473)
+
+Batch analysis...
+  Using 8 parallel threads for 63 batches...
+  Batch #7 -> 19 patterns detected
+  Batch #5 -> 29 patterns detected
+  Batch #8 -> 33 patterns detected
+  Batch #10 -> 44 patterns detected
+  Batch #4 -> 32 patterns detected
+  Batch #11 -> 52 patterns detected
+  Batch #2 -> 80 patterns detected
+  Batch #6 -> 100 patterns detected
+  Batch #12 -> 80 patterns detected
+  Batch #16 -> 66 patterns detected
+  Batch #17 -> 44 patterns detected
+  Batch #3 -> 140 patterns detected
+  Batch #1 -> 140 patterns detected
+  Batch #20 -> 10 patterns detected
+  Batch #9 -> 1 patterns detected
+  Batch #21 -> 56 patterns detected
+  Batch #22 -> 52 patterns detected
+  Batch #23 -> 23 patterns detected
+  Batch #13 -> 24 patterns detected
+  Batch #25 -> 46 patterns detected
+  Batch #28 -> 11 patterns detected
+  Batch #14 -> 24 patterns detected
+  Batch #30 -> 19 patterns detected
+  Batch #29 -> 38 patterns detected
+  Batch #15 -> 24 patterns detected
+  Batch #33 -> 19 patterns detected
+  Batch #32 -> 76 patterns detected
+  Batch #24 -> 100 patterns detected
+  Batch #35 -> 21 patterns detected
+  Batch #34 -> 36 patterns detected
+  Batch #36 -> 34 patterns detected
+  Batch #18 -> 24 patterns detected
+  Batch #39 -> 10 patterns detected
+  Batch #19 -> 1 patterns detected
+  Batch #37 -> 48 patterns detected
+  Batch #40 -> 10 patterns detected
+  Batch #43 -> 14 patterns detected
+  Batch #44 -> 49 patterns detected
+  Batch #38 -> 12 patterns detected
+  Batch #46 -> 48 patterns detected
+  Batch #26 -> 1 patterns detected
+  Batch #47 -> 30 patterns detected
+  Batch #27 -> 1 patterns detected
+  Batch #48 -> 40 patterns detected
+  Batch #49 -> 60 patterns detected
+  Batch #50 -> 46 patterns detected
+  Batch #51 -> 16 patterns detected
+  Batch #41 -> 80 patterns detected
+  Batch #55 -> 10 patterns detected
+  Batch #53 -> 46 patterns detected
+  Batch #31 -> 24 patterns detected
+  Batch #56 -> 40 patterns detected
+  Batch #52 -> 33 patterns detected
+  Batch #54 -> 73 patterns detected
+  Batch #59 -> 41 patterns detected
+  Batch #60 -> 44 patterns detected
+  Batch #63 -> 24 patterns detected
+  Batch #62 -> 40 patterns detected
+  Batch #58 -> 104 patterns detected
+  Batch #42 -> 6 patterns detected
+  Batch #57 -> 80 patterns detected
+  Batch #45 -> 24 patterns detected
+  Batch #61 -> 24 patterns detected
+
+Global synthesis pass (432 candidates)...
+Synthesis contributed 78 patterns
+
+Expanding tandem repeat variants...
+Total after expansion: 437 patterns
+
+Validating patterns against real sequences...
+Valid patterns: 123
+Discarded: 314
+
+Deduplicating phase-variant patterns...
+123 -> 123 patterns after deduplication
+
+  Patterns retained  : 123 (PNN: 104, micro: 19)
+  Micro-token slots  : 19/19 used
+  Micro assignments  : 'b'='GAAGAAGGACAGGGGTAGTAACTGACCTTTGTTTGACGGTAATCAATTAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG', 'd'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGG', 'e'='CAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGG', 'f'='GAAGAAGGGTTTCGGCTCGTAAAGCTCTGTTGTTGGTGAAGAAGG', 'h'='CAGCAGTAGGGAATCTTCCACAATGGACGCA', 'i'='AGCAGTAGGGAATCTTCCACAATGGACGCA', 'j'='CTAC', 'k'='CCGC', 'l'='GTAA', 'm'='AGCC', 'o'='TACG', 'p'='CAGCAGTAGGGAATCTTCCACA', 'r'='CTTC', 's'='GAAGAAGGATAGAGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGCGCAGGCGGAAGAATAAGTCTGATGTGAAAGCCCTCGGCTTAACCGAGGAACTGCATCGG', 'v'='CAGCAGTAGGGAATCTTCCAC', 'w'='AGCAGTAGGGAATCTTCCACA', 'x'='TTTC', 'y'='CGCC', 'z'='GAAG'
+  Estimated bytes saved: 3,340,921
+
+Optimizing and assigning final tokens...
+  Limiting to the best 86 patterns due to token capacity.
+  Final patterns after optimization: 86
+  Priority 1 is the longest/most efficient pattern.
+
+========================================================
+ANALYSIS COMPLETE
+Final patterns: 86
+Saved to: .\data\ERR15993673_5000_deepseek_patterns.json
+Log saved to: data/ERR15993673_5000_deepseek_patterns_log_20260409_183011.txt
+========================================================

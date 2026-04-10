@@ -1,0 +1,5 @@
+Decompressing: .\data\ERR15993673_5000_chatgpt.seq.compress
+
+Decompression completed
+Sequences restored : 5000
+Output file        : .\data\ERR15993673_5000_chatgpt.seq.restored
