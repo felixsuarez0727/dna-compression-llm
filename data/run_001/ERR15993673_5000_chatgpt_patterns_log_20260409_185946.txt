@@ -1,0 +1,117 @@
+
+========================================================
+  FASTQ Pattern Detector  [chatgpt]
+========================================================
+  File       : .\data\ERR15993673_5000.seq.txt
+  Model      : gpt-4o-mini
+  Batch size : 80
+  Overhead   : 101
+  Threads    : 8
+  Log file   : data/ERR15993673_5000_chatgpt_patterns_log_20260409_185946.txt
+  Output     : .\data\ERR15993673_5000_chatgpt_patterns.json
+========================================================
+
+Loading sequences...
+5000 sequences loaded
+
+K-mer pre-analysis...
+k=4: CTAC(16852), CCGC(14930), GTAA(14430)
+k=8: GAAGAAGG(4925), TGAAGAAG(4920), GTGAAGAA(4919)
+k=12: AGTAGGGAATCT(2473), GTAGGGAATCTT(2473), TAGGGAATCTTC(2473)
+
+Batch analysis...
+  Using 8 parallel threads for 63 batches...
+  Batch #6 -> 15 patterns detected
+  Batch #5 -> 11 patterns detected
+  Batch #1 -> 50 patterns detected
+  Batch #2 -> 50 patterns detected
+  Batch #4 -> 152 patterns detected
+  Batch #10 -> 147 patterns detected
+  Batch #8 -> 131 patterns detected
+  Batch #11 -> 118 patterns detected
+  Batch #12 -> 8 patterns detected
+  Batch #3 -> 51 patterns detected
+  Batch #7 -> 131 patterns detected
+  Batch #9 -> 194 patterns detected
+  Batch #20 -> 50 patterns detected
+  Batch #14 -> 142 patterns detected
+  Batch #13 -> 54 patterns detected
+  Batch #15 -> 54 patterns detected
+  Batch #22 -> 147 patterns detected
+  Batch #16 -> 78 patterns detected
+  Batch #17 -> 6 patterns detected
+  Batch #19 -> 129 patterns detected
+  Batch #23 -> 107 patterns detected
+  Batch #18 -> 101 patterns detected
+  Batch #21 -> 200 patterns detected
+  Batch #24 -> 185 patterns detected
+  Batch #30 -> 150 patterns detected
+  Batch #25 -> 8 patterns detected
+  Batch #31 -> 122 patterns detected
+  Batch #33 -> 143 patterns detected
+  Batch #34 -> 147 patterns detected
+  Batch #26 -> 179 patterns detected
+  Batch #27 -> 166 patterns detected
+  Batch #28 -> 72 patterns detected
+  Batch #40 -> 150 patterns detected
+  Batch #39 -> 69 patterns detected
+  Batch #29 -> 101 patterns detected
+  Batch #43 -> 16 patterns detected
+  Batch #32 -> 86 patterns detected
+  Batch #45 -> 24 patterns detected
+  Batch #35 -> 87 patterns detected
+  Batch #47 -> 119 patterns detected
+  Batch #46 -> 150 patterns detected
+  Batch #36 -> 142 patterns detected
+  Batch #37 -> 165 patterns detected
+  Batch #38 -> 88 patterns detected
+  Batch #41 -> 52 patterns detected
+  Batch #42 -> 81 patterns detected
+  Batch #53 -> 24 patterns detected
+  Batch #54 -> 150 patterns detected
+  Batch #55 -> 12 patterns detected
+  Batch #44 -> 65 patterns detected
+  Batch #56 -> 147 patterns detected
+  Batch #57 -> 50 patterns detected
+  Batch #58 -> 150 patterns detected
+  Batch #48 -> 150 patterns detected
+  Batch #49 -> 193 patterns detected
+  Batch #50 -> 20 patterns detected
+  Batch #51 -> 14 patterns detected
+  Batch #52 -> 188 patterns detected
+  Batch #63 -> 99 patterns detected
+  Batch #60 -> 98 patterns detected
+  Batch #59 -> 1 patterns detected
+  Batch #62 -> 63 patterns detected
+  Batch #61 -> 76 patterns detected
+
+Global synthesis pass (2921 candidates)...
+Synthesis contributed 74 patterns
+
+Expanding tandem repeat variants...
+Total after expansion: 2921 patterns
+
+Validating patterns against real sequences...
+Valid patterns: 379
+Discarded: 2542
+
+Deduplicating phase-variant patterns...
+379 -> 379 patterns after deduplication
+
+  Patterns retained  : 371 (PNN: 352, micro: 19)
+  Micro-token slots  : 19/19 used
+  Micro assignments  : 'b'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGAGCA', 'd'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGAGC', 'e'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGAG', 'f'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGA', 'h'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGG', 'i'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATG', 'j'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGAT', 'k'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGA', 'l'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTG', 'm'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCT', 'o'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGTC', 'p'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAGT', 'r'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCAAG', 's'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACG', 'v'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGCA', 'w'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGAC', 'x'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGACGC', 'y'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGGA', 'z'='GTCCTACGGGAGGCAGCAGTAGGGAATCTTCCACAATGG'
+  Discarded (no gain): 'AGGG', 'CAGT', 'AGTT', 'GGGA', 'GAGG', 'GCTG', 'ATCG', 'GTCG'
+  Estimated bytes saved: 7,972,468
+
+Optimizing and assigning final tokens...
+  Limiting to the best 86 patterns due to token capacity.
+  Final patterns after optimization: 86
+  Priority 1 is the longest/most efficient pattern.
+
+========================================================
+ANALYSIS COMPLETE
+Final patterns: 86
+Saved to: .\data\ERR15993673_5000_chatgpt_patterns.json
+Log saved to: data/ERR15993673_5000_chatgpt_patterns_log_20260409_185946.txt
+========================================================

@@ -137,8 +137,72 @@ python extract_n.py --input ./fast_files/ERR15993673.fastq --output ./data/ERR15
 | `--n` | Number of sequences to extract |
 
 ---
+## Step 5 - Analyze Overhead
 
-## Step 5 - Detect Patterns
+This script is a diagnostic utility designed to fine-tune the compression efficiency of the DNA pipeline.
+
+Its primary purpose is to determine the optimal `--overhead` value — a threshold used to decide if a DNA pattern is frequent enough to justify the "cost" of storing it in the JSON dictionary.
+
+---
+
+## How It Works
+
+The script performs a simulation that mimics the compression logic without requiring an expensive LLM call.
+
+### 1. Statistical "Ground Truth" Analysis
+
+- **K-mer Scan**  
+  It scans the `.seq.txt` file for frequent sub-sequences (lengths 4–12) to create a list of candidate patterns.
+
+- **Deterministic Expansion**  
+  It identifies *tandem repeats* (e.g., seeing `ATCG` and finding `ATCGATCGATCG`) and removes redundant shifted variants to ensure the pattern list is clean.
+
+---
+
+### 2. Empirical Measurement of JSON "Cost"
+
+- The script calculates the real byte size of a JSON dictionary entry.
+- It measures the **Fixed Metadata Cost** — the bytes taken up by JSON syntax (brackets, quotes, labels like `"sequence"`, `"count"`).
+- This cost is identified as approximately **45–50 bytes per entry**.
+
+---
+
+### 3. Mathematical Simulation (The Sweep)
+
+The script runs a simulation across a range of overhead values (1 to 200).
+
+For each value, it applies a corrected savings formula:
+
+$$
+Net\ Savings = (Count \times (SequenceLength - 3)) - RealEntrySize
+$$
+
+- **Correction**  
+  Unlike the main pipeline (which assumes a 1-character cost), this script accounts for the 3-byte `<X>` token format used in the compressed file.
+
+---
+
+### 4. Optimization Discovery
+
+- It compares:
+  - **Gross Savings** (bytes removed from the sequence)
+  - **Dictionary Cost** (bytes added by the JSON file)
+
+- It identifies the **"Sweet Spot"** where:
+Net Savings = Gross Savings - Cost is maximized.
+
+---
+
+## Key Takeaway for the User
+
+The script reveals that the default `--overhead 5` in the main pipeline is likely too aggressive  
+(i.e., it keeps patterns that actually increase the total file size).
+
+It typically recommends a higher overhead (e.g., **~45–50**) to ensure that every pattern stored in the dictionary provides a definitive net gain in compression.
+
+
+
+## Step 6 - Detect Patterns
 
 Run the pattern detector against the sequence file. The script sends batches to the chosen LLM, aggregates detected patterns across all batches, runs a synthesis pass, optionally expands tandem repeat variants, validates every candidate against the real sequences, deduplicates phase variants, and finally produces an optimized token dictionary saved as JSON.
 
@@ -180,7 +244,7 @@ Threading is not available for Gemini. The `--threads` argument is silently igno
 
 ---
 
-## Step 6 - Compress
+## Step 7 - Compress
 
 ### Using DeepSeek
 ```
@@ -208,7 +272,7 @@ The script reports the number of sequences processed and the compression ratio o
 
 ---
 
-## Step 7 - Decompress
+## Step 8 - Decompress
 
 ### Using DeepSeek
 ```
@@ -235,7 +299,7 @@ The same pattern JSON file used during compression must be supplied here. Withou
 
 ---
 
-## Step 8 - Verify Integrity
+## Step 9 - Verify Integrity
 
 Confirm the restored file is identical to the original.
 
@@ -254,6 +318,18 @@ python check_files.py .\data\ERR15993673_5000.seq.txt .\data\ERR15993673_5000_ge
 ```
 
 The script compares both files line by line, ignoring leading and trailing whitespace and empty lines. It prints whether the files are equal or different.
+---
+
+## About compression_gzip_bz2_lzma_benchmark.py
+This code was built for testing how much the common compression algorithms perform over the example used in this project.
+This is the list of algorithms:
+
+- Gzip: Uses the DEFLATE algorithm, balancing speed and compression.
+
+- Bzip2: Uses the Burrows-Wheeler transform; typically slower than gzip but achieves higher compression ratios.
+
+- LZMA: The algorithm behind 7-Zip; it usually provides the highest compression ratio at the cost of significant memory and time.
+
 
 ---
 ## Conclusions
