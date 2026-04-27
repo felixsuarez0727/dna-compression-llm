@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>FASTQ Compression Pipeline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap');
+
+  :root {
+    --bg:      #0A090F;
+    --surface: #13111C;
+    --border:  rgba(255,255,255,0.08);
+    --purple-g:#534AB7;
+    --purple-s:rgba(124,111,212,0.22);
+    --teal-g:  #1D9E75;
+    --teal-s:  rgba(44,201,148,0.20);
+    --amber-g: #C4840A;
+    --amber-s: rgba(232,165,42,0.20);
+    --coral-g: #C04A28;
+    --coral-s: rgba(232,105,60,0.20);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width: 1440px;
+    background: var(--bg);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .canvas {
+    width: 1440px;
+    padding: 64px 80px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .canvas::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 500px;
+    background: radial-gradient(ellipse, rgba(124,111,212,0.09) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 8px;
+  }
+
+  .title {
+    font-family: 'Syne', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .title em { font-style: normal; color: #7C6FD4; }
+
+  .subtitle-line {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 7px;
+    letter-spacing: 0.02em;
+  }
+
+  .subtitle-line strong {
+    color: #ffffff;
+    font-weight: 500;
+  }
+
+  .dataset-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+
+  .dataset-pill {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 24px;
+    padding: 6px 16px;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.70);
+    letter-spacing: 0.04em;
+  }
+
+  .dataset-pill strong { color: #ffffff; font-weight: 500; }
+
+  /* ── legend ── */
+  .legend {
+    display: flex;
+    gap: 8px;
+    margin-top: 22px;
+    margin-bottom: 52px;
+    flex-wrap: wrap;
+  }
+
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 10px;
+    border-radius: 99px;
+    border: 0.5px solid var(--border);
+    background: var(--surface);
+  }
+
+  .leg-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .leg-text { font-size:12px; font-weight:400; color:#ffffff; white-space:nowrap; }
+
+  /* ── pipeline ── */
+  .pipeline {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .circle-outer { position:relative; width:84px; height:84px; flex-shrink:0; }
+
+  .circle {
+    position: relative;
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    border: 1.5px solid rgba(255,255,255,0.20);
+    transition: transform 0.22s cubic-bezier(.34,1.56,.64,1);
+    cursor: default;
+  }
+
+  .stage:hover .circle { transform: translateY(-5px) scale(1.07); }
+
+  .stage-badge {
+    position: absolute;
+    top: -5px; right: -5px;
+    width: 21px; height: 21px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid rgba(255,255,255,0.22);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 600;
+    color: #ffffff;
+  }
+
+  .label { margin-top: 14px; text-align:center; width:96px; }
+  .lname { font-size:13px; font-weight:600; color:#ffffff; line-height:1.35; }
+  .lsub  { font-size:11.5px; color:rgba(255,255,255,0.70); margin-top:4px; }
+  .ldesc { font-size:10.5px; color:rgba(255,255,255,0.55); margin-top:5px; line-height:1.5; font-family:'Courier New',monospace; }
+
+  /* ── connectors ── */
+  .conn {
+    display:flex; align-items:center;
+    margin-top:42px; flex-shrink:0; width:40px; z-index:2;
+  }
+  .cline  { flex:1; height:1.5px; background:rgba(255,255,255,0.18); }
+  .carrow { width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid rgba(255,255,255,0.28); }
+
+  .out-conn { display:flex; align-items:center; margin-top:42px; flex-shrink:0; width:40px; }
+  .out-conn .cline  { background:rgba(44,201,148,0.45); }
+  .out-conn .carrow { border-left-color:rgba(44,201,148,0.65); }
+
+  /* ── output badge ── */
+  .output {
+    display:flex; flex-direction:column; justify-content:center;
+    flex-shrink:0; margin-top:28px; padding-left:10px;
+  }
+
+  .out-badge {
+    display:flex; align-items:center; gap:10px;
+    background:rgba(44,201,148,0.10);
+    border:1px solid rgba(44,201,148,0.40);
+    border-radius:99px;
+    padding:11px 22px 11px 13px;
+  }
+
+  .check-ring {
+    width:24px; height:24px; border-radius:50%;
+    background:#1D9E75;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    box-shadow:0 0 14px rgba(44,201,148,0.45);
+  }
+
+  .check-ring svg { width:13px; height:13px; }
+  .out-title { font-size:14px; font-weight:600; color:#2CC994; }
+  .out-code  { font-size:11px; color:rgba(44,201,148,0.65); margin-top:2px; font-family:'Courier New',monospace; }
+
+  /* ── bottom bar ── */
+  .bottom-bar {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:52px; padding-top:22px;
+    border-top:0.5px solid var(--border);
+  }
+
+  .bottom-left { font-size:11.5px; color:rgba(255,255,255,0.60); letter-spacing:0.04em; }
+
+  .model-pills { display:flex; gap:6px; }
+  .mpill {
+    font-size:11px; padding:5px 14px; border-radius:99px;
+    border:0.5px solid var(--border); color:#ffffff; letter-spacing:0.04em;
+  }
+
+  /* ── color ramps ── */
+  .c-purple { background:var(--purple-g); box-shadow:0 0 0 8px var(--purple-s),0 8px 24px rgba(83,74,183,0.40); }
+  .c-teal   { background:var(--teal-g);   box-shadow:0 0 0 8px var(--teal-s),  0 8px 24px rgba(29,158,117,0.40); }
+  .c-amber  { background:var(--amber-g);  box-shadow:0 0 0 8px var(--amber-s), 0 8px 24px rgba(196,132,10,0.40); }
+  .c-coral  { background:var(--coral-g);  box-shadow:0 0 0 8px var(--coral-s), 0 8px 24px rgba(192,74,40,0.40); }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- header -->
+  <div class="header">
+    <div class="title-block">
+      <div class="eyebrow">System methodology · Lossless compression</div>
+      <div class="title">FASTQ Compression <em>Pipeline</em></div>
+      <div class="subtitle-line">Six-module workflow &mdash; <strong>LLM-guided</strong> pattern discovery &middot; deterministic validation &middot; guaranteed losslessness</div>
+    </div>
+    <div class="dataset-badge">
+      <div class="dataset-pill">Dataset <strong>ERR15993673</strong></div>
+      <div class="dataset-pill"><strong>5 000</strong> Illumina reads &middot; 1.48 MB</div>
+    </div>
+  </div>
+
+  <!-- legend -->
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#7C6FD4"></div><span class="leg-text">Input / output</span></div>
+    <div class="leg"><div class="leg-dot" style="background:#2CC994"></div><span class="leg-text">Extraction &amp; analysis (1&ndash;2)</span></div>
+    <div class="leg"><div class="leg-dot" style="background:#E8A52A"></div><span class="leg-text">LLM-guided detection (3)</span></div>
+    <div class="leg"><div class="leg-dot" style="background:#E8693C"></div><span class="leg-text">Compression &amp; decompression (4&ndash;5)</span></div>
+    <div class="leg"><div class="leg-dot" style="background:#7C6FD4"></div><span class="leg-text">Integrity verification (6)</span></div>
+  </div>
+
+  <!-- pipeline -->
+  <div class="pipeline">
+
+    <!-- FASTQ input -->
+    <div class="stage">
+      <div class="circle-outer">
+        <div class="circle c-purple">&#x2605;</div>
+      </div>
+      <div class="label">
+        <div class="lname">FASTQ input</div>
+        <div class="lsub">raw sequences</div>
+        <div class="ldesc">source file</div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
+
+    <!-- Module 1: extract_n.py -->
+    <div class="stage">
+      <div class="circle-outer">
+        <div class="circle c-teal">1<div class="stage-badge">M1</div></div>
+      </div>
+      <div class="label">
+        <div class="lname">Extract reads</div>
+        <div class="lsub">Module 1</div>
+        <div class="ldesc">extract_n.py</div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
+
+    <!-- Module 2: analyze_overhead.py -->
+    <div class="stage">
+      <div class="circle-outer">
+        <div class="circle c-teal">2<div class="stage-badge">M2</div></div>
+      </div>
+      <div class="label">
+        <div class="lname">Overhead &delta;</div>
+        <div class="lsub">Module 2</div>
+        <div class="ldesc">analyze_overhead.py</div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
+
+    <!-- Module 3: pattern_detector.py -->
+    <div class="stage">
+      <div class="circle-outer">
+        <div class="circle c-amber">3<div class="stage-badge">M3</div></div>
+      </div>
+      <div class="label">
+        <div class="lname">Pattern detection</div>
+        <div class="lsub">Module 3</div>
+        <div class="ldesc">pattern_detector.py</div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
+
+    <!-- Module 4: fastq_compressor.py -->
+    <div class="stage">
+      <div class="circle-outer">
+        <div class="circle c-coral">4<div class="stage-badge">M4</div></div>
+      </div>
+      <div class="label">
+        <div class="lname">Compression</div>
+        <div class="lsub">Module 4</div>
+        <div class="ldesc">fastq_compressor.py</div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
+
+    <!-- Module 5: fastq_decompressor.py -->
+    <div class="stage">
+      <div class="circle-outer">
+        <div class="circle c-coral">5<div class="stage-badge">M5</div></div>
+      </div>
+      <div class="label">
+        <div class="lname">Decompression</div>
+        <div class="lsub">Module 5</div>
+        <div class="ldesc">fastq_decompressor.py</div>
+      </div>
+    </div>
+
+    <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
+
+    <!-- Module 6: check_files.py -->
+    <div class="stage">
+      <div class="circle-outer">
+        <div class="circle c-purple">6<div class="stage-badge">M6</div></div>
+      </div>
+      <div class="label">
+        <div class="lname">Integrity check</div>
+        <div class="lsub">Module 6</div>
+        <div class="ldesc">check_files.py</div>
+      </div>
+    </div>
+
+    <!-- output -->
+    <div class="out-conn"><div class="cline"></div><div class="carrow"></div></div>
+
+    <div class="output">
+      <div class="out-badge">
+        <div class="check-ring">
+          <svg viewBox="0 0 12 12" fill="none">
+            <polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="out-title">Lossless output</div>
+          <div class="out-code">zero mismatches</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pipeline -->
+
+  <!-- bottom bar -->
+  <div class="bottom-bar">
+    <div class="bottom-left">ERR15993673 &middot; Human vaginal microbiome &middot; Illumina paired-end &middot; 5 000 reads &middot; 1.479 MB uncompressed</div>
+    <div class="model-pills">
+      <div class="mpill">GPT-4o-mini</div>
+      <div class="mpill">Gemini 2.0 Flash</div>
+      <div class="mpill">DeepSeek-Chat</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
