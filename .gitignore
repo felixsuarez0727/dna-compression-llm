@@ -1,1 +1,29 @@
-/venv
+venv/
+__pycache__/
+*.py[cod]
+
+# VS Code / editor files
+.vscode/
+.history/
+*.code-workspace
+
+# Local environment
+.env
+.env.*
+
+# Generated data and experiment artifacts
+data/outputs/*
+!data/outputs/.gitkeep
+data/logs/*
+!data/logs/.gitkeep
+data/runs/*
+!data/runs/.gitkeep
+
+# Raw FASTQ inputs are large and should be local-only
+fastq_files/input/*
+!fastq_files/input/.gitkeep
+fastq_files/*.fastq
+fastq_files/*.fastq.gz
+
+# Temporary presentation artifacts
+presentation_workspace/

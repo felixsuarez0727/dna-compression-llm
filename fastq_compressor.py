@@ -27,6 +27,7 @@ def compress_seq(input_file, pattern_file, output_file, log_file):
 
     save_log(f"Compressing: {input_file}", filename=log_file)
     total = 0
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
 
     # Se agrega encoding='utf-8' para soportar los tokens de 1 byte (0-255)
     with open(input_file, "r", encoding='utf-8') as inp, \
@@ -55,8 +56,8 @@ def compress_seq(input_file, pattern_file, output_file, log_file):
 
 def save_log(line, filename="compression_stats.log"):
     safe_line = line.replace("→", "->")
-    os.makedirs(f"data/", exist_ok=True)
-    with open(f"data/{filename}", "a", encoding="utf-8") as log_file:
+    os.makedirs("data/logs", exist_ok=True)
+    with open(f"data/logs/{filename}", "a", encoding="utf-8") as log_file:
         print(safe_line)
         log_file.write(safe_line + "\n")
 
