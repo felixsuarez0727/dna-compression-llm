@@ -1,4 +1,37 @@
 # DNA Compression With LLM
+## Table of Contents
+
+- [How It Works](#how-it-works)
+- [How the Pattern Detector Works](#how-the-pattern-detector-works)
+  - [Key Features](#key-features)
+  - [How the Pipeline Works](#how-the-pipeline-works)
+    - [1. Statistical Pre-Analysis](#1-statistical-pre-analysis)
+    - [2. Batch Processing & AI Analysis](#2-batch-processing--ai-analysis)
+    - [3. Expansion & Deduplication](#3-expansion--deduplication)
+    - [4. Mathematical Optimization](#4-mathematical-optimization)
+    - [5. Final Dictionary Generation](#5-final-dictionary-generation)
+  - [Technical Specifications](#technical-specifications)
+- [Installation](#installation)
+- [Files](#files)
+- [Step 1 - Download FASTQ File](#step-1---download-fastq-file)
+- [Step 2 - Setting Python Environment](#step-2---setting-python-environment)
+- [Step 3 - Dependencies](#step-3---dependencies)
+- [Step 4 - Prepare the Sequence File](#step-4---prepare-the-sequence-file)
+- [Step 5 - Analyze Overhead](#step-5---analyze-overhead)
+  - [How It Works](#how-it-works-1)
+    - [1. Statistical "Ground Truth" Analysis](#1-statistical-ground-truth-analysis)
+    - [2. Empirical Measurement of JSON "Cost"](#2-empirical-measurement-of-json-cost)
+    - [3. Mathematical Simulation (The Sweep)](#3-mathematical-simulation-the-sweep)
+    - [4. Optimization Discovery](#4-optimization-discovery)
+  - [Key Takeaway for the User](#key-takeaway-for-the-user)
+- [Step 6 - Detect Patterns](#step-6---detect-patterns)
+- [Step 7 - Compress](#step-7---compress)
+- [Step 8 - Decompress](#step-8---decompress)
+- [Step 9 - Verify Integrity](#step-9---verify-integrity)
+- [About compression_gzip_bz2_lzma_benchmark.py](#about-compression_gzip_bz2_lzma_benchmarkpy)
+- [Conclusions](#conclusions)
+- [Notes](#notes)
+- [Citation](#citation)
 
 A pipeline for compressing DNA sequence files by detecting repetitive patterns using Large Language Models. The LLM analyzes batches of sequences, identifies tandem repeat structures, and produces a pattern dictionary that a compressor uses to substitute long repetitive motifs with short tokens. A paired decompressor fully restores the original sequences.
 
