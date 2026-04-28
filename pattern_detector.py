@@ -17,8 +17,8 @@ def save_log(line):
     safe_line = line.replace("→", "->")
     print(safe_line)
     if _LOG_FILE:
-        os.makedirs("data", exist_ok=True)
-        with open(f"data/{_LOG_FILE}", "a", encoding="utf-8") as f:
+        os.makedirs("data/logs", exist_ok=True)
+        with open(f"data/logs/{_LOG_FILE}", "a", encoding="utf-8") as f:
             f.write(safe_line + "\n")
 
 PROVIDER_DEFAULTS = {
@@ -402,13 +402,14 @@ def optimize_patterns(compressor_patterns, dictionary_overhead=5):
 
 
 def save_to_json(data, filename):
+    Path(filename).parent.mkdir(parents=True, exist_ok=True)
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
 
 def main():
     parser = argparse.ArgumentParser(description="FASTQ Pattern Detector using LLMs")
-    parser.add_argument("--file", "-f", required=True, help="Path to the .fastq file")
+    parser.add_argument("--file", "-f", required=True, help="Path to the sequence text file")
     parser.add_argument("--key", "-k", required=True, help="API key for the selected provider")
     parser.add_argument(
         "--provider", "-p",
@@ -444,7 +445,7 @@ def main():
     save_log(f"  Overhead   : {args.overhead}")
     if args.provider in ("chatgpt", "deepseek"):
         save_log(f"  Threads    : {args.threads}")
-    save_log(f"  Log file   : data/{_LOG_FILE}")
+    save_log(f"  Log file   : data/logs/{_LOG_FILE}")
     save_log(f"  Output     : {args.output}")
     save_log(f"{sep}\n")
 
@@ -561,7 +562,7 @@ def main():
     save_log("ANALYSIS COMPLETE")
     save_log(f"Final patterns: {len(final_patterns)}")
     save_log(f"Saved to: {args.output}")
-    save_log(f"Log saved to: data/{_LOG_FILE}")
+    save_log(f"Log saved to: data/logs/{_LOG_FILE}")
     save_log(f"{sep}")
 
 

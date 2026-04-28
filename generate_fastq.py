@@ -1,5 +1,6 @@
 import random
 import sys
+from pathlib import Path
 
 COMMON_PATTERNS = [
     "ATCGATCGATCGATCG",
@@ -46,10 +47,12 @@ def generate_fastq_file(output_file, num_sequences=1000, seq_length=100):
         num_sequences: Number of sequences to generate
         seq_length: Length of each sequence
     """
-    print(f"🧬 Generating synthetic FASTQ file...")
+    print("Generating synthetic FASTQ file...")
     print(f"   Sequences: {num_sequences}")
     print(f"   Length: {seq_length} nucleotides")
     
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
+
     with open(output_file, 'w') as f:
         for i in range(1, num_sequences + 1):
             fastq_entry = generate_sequence(i, seq_length)
@@ -58,7 +61,7 @@ def generate_fastq_file(output_file, num_sequences=1000, seq_length=100):
             if i % 100 == 0:
                 print(f"   Generated {i}/{num_sequences} sequences...")
     
-    print(f"\n✅ File generated: {output_file}")
+    print(f"\nFile generated: {output_file}")
     
     import os
     file_size = os.path.getsize(output_file)
