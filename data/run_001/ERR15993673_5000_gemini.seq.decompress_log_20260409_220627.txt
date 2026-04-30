@@ -1,5 +1,0 @@
-Decompressing: .\data\ERR15993673_5000_gemini.seq.compress
-
-Decompression completed
-Sequences restored : 5000
-Output file        : .\data\ERR15993673_5000_gemini.seq.restored
