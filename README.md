@@ -133,7 +133,9 @@ DeepSeek uses the OpenAI-compatible client pointed at `https://api.deepseek.com`
 ## Step 1 - Download FASTQ File
 1. Download the testing file from: https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&acc=ERR15993673
 
-2. Then place the FASTQ file alone in this folder: `/fastq_files`
+2. Then place the FASTQ file alone in this folder: `/fastq_files/input`
+
+The extractor supports both plain `.fastq` files and compressed `.fastq.gz` files.
 
 ## Step 2 - Setting Python Environment
 ```bash
@@ -160,7 +162,7 @@ pip install -r requirements.txt
 Extract a number of sequences from a FASTQ file into a plain text file. Each output line contains one raw sequence.
 
 ```
-python extract_n.py --input ./fast_files/ERR15993673.fastq --output ./data/ERR15993673_5000.seq.txt --n 5000
+python extract_n.py --input ./fastq_files/input/ERR15993673.fastq.gz --output ./data/input/ERR15993673_5000.seq.txt --n 5000
 ```
 
 | Argument | Description |
@@ -173,6 +175,10 @@ python extract_n.py --input ./fast_files/ERR15993673.fastq --output ./data/ERR15
 ## Step 5 - Analyze Overhead
 
 This script is a diagnostic utility designed to fine-tune the compression efficiency of the DNA pipeline.
+
+```
+python analyze_overhead.py --file ./data/input/ERR15993673_5000.seq.txt
+```
 
 Its primary purpose is to determine the optimal `--overhead` value — a threshold used to decide if a DNA pattern is frequent enough to justify the "cost" of storing it in the JSON dictionary.
 
@@ -242,19 +248,19 @@ Run the pattern detector against the sequence file. The script sends batches to 
 ### Using DeepSeek
 
 ```
-python pattern_detector.py --threads 8 -f .\data\ERR15993673_5000.seq.txt -o .\data\ERR15993673_5000_deepseek_patterns.json -b 80 -p deepseek -m deepseek-chat -k [KEY]
+python pattern_detector.py --threads 8 -f .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_deepseek_patterns.json -b 80 -p deepseek -m deepseek-chat -k [KEY]
 ```
 
 ### Using ChatGPT
 
 ```
-python pattern_detector.py --threads 8 -f .\data\ERR15993673_5000.seq.txt -o .\data\ERR15993673_5000_chatgpt_patterns.json -b 80 -p chatgpt -m gpt-4o-mini -k [KEY]
+python pattern_detector.py --threads 8 -f .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_chatgpt_patterns.json -b 80 -p chatgpt -m gpt-4o-mini -k [KEY]
 ```
 
 ### Using Gemini
 
 ```
-python pattern_detector.py -f .\data\ERR15993673_5000.seq.txt -o .\data\ERR15993673_5000_gemini_patterns.json -b 80 -p gemini -m gemini-2.0-flash -k [KEY]
+python pattern_detector.py -f .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_gemini_patterns.json -b 80 -p gemini -m gemini-2.0-flash -k [KEY]
 ```
 
 ### All Arguments
@@ -281,17 +287,17 @@ Threading is not available for Gemini. The `--threads` argument is silently igno
 
 ### Using DeepSeek
 ```
-python fastq_compressor.py -i .\data\ERR15993673_5000.seq.txt -o .\data\ERR15993673_5000_deepseek.seq.compress -p .\data\ERR15993673_5000_deepseek_patterns.json
+python fastq_compressor.py -i .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_deepseek.seq.compress -p .\data\outputs\ERR15993673_5000_deepseek_patterns.json
 ```
 
 ### Using ChatGPT
 ```
-python fastq_compressor.py -i .\data\ERR15993673_5000.seq.txt -o .\data\ERR15993673_5000_chatgpt.seq.compress -p .\data\ERR15993673_5000_chatgpt_patterns.json
+python fastq_compressor.py -i .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_chatgpt.seq.compress -p .\data\outputs\ERR15993673_5000_chatgpt_patterns.json
 ```
 
 ### Using Gemini
 ```
-python fastq_compressor.py -i .\data\ERR15993673_5000.seq.txt -o .\data\ERR15993673_5000_gemini.seq.compress -p .\data\ERR15993673_5000_gemini_patterns.json
+python fastq_compressor.py -i .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_gemini.seq.compress -p .\data\outputs\ERR15993673_5000_gemini_patterns.json
 ```
 
 ### All Arguments
@@ -309,17 +315,17 @@ The script reports the number of sequences processed and the compression ratio o
 
 ### Using DeepSeek
 ```
-python fastq_decompressor.py -i .\data\ERR15993673_5000_deepseek.seq.compress -o .\data\ERR15993673_5000_deepseek.seq.restored -p .\data\ERR15993673_5000_deepseek_patterns.json
+python fastq_decompressor.py -i .\data\outputs\ERR15993673_5000_deepseek.seq.compress -o .\data\outputs\ERR15993673_5000_deepseek.seq.restored -p .\data\outputs\ERR15993673_5000_deepseek_patterns.json
 ```
 
 ### Using ChatGPT
 ```
-python fastq_decompressor.py -i .\data\ERR15993673_5000_chatgpt.seq.compress -o .\data\ERR15993673_5000_chatgpt.seq.restored -p .\data\ERR15993673_5000_chatgpt_patterns.json
+python fastq_decompressor.py -i .\data\outputs\ERR15993673_5000_chatgpt.seq.compress -o .\data\outputs\ERR15993673_5000_chatgpt.seq.restored -p .\data\outputs\ERR15993673_5000_chatgpt_patterns.json
 ```
 
 ### Using Gemini
 ```
-python fastq_decompressor.py -i .\data\ERR15993673_5000_gemini.seq.compress -o .\data\ERR15993673_5000_gemini.seq.restored -p .\data\ERR15993673_5000_gemini_patterns.json
+python fastq_decompressor.py -i .\data\outputs\ERR15993673_5000_gemini.seq.compress -o .\data\outputs\ERR15993673_5000_gemini.seq.restored -p .\data\outputs\ERR15993673_5000_gemini_patterns.json
 ```
 
 | Argument | Short | Description |
@@ -338,16 +344,16 @@ Confirm the restored file is identical to the original.
 
 ### Using DeepSeek
 ```
-python check_files.py .\data\ERR15993673_5000.seq.txt .\data\ERR15993673_5000_deepseek.seq.restored
+python check_files.py .\data\input\ERR15993673_5000.seq.txt .\data\outputs\ERR15993673_5000_deepseek.seq.restored
 ```
 ### Using ChatGPT
 ```
-python check_files.py .\data\ERR15993673_5000.seq.txt .\data\ERR15993673_5000_chatgpt.seq.restored
+python check_files.py .\data\input\ERR15993673_5000.seq.txt .\data\outputs\ERR15993673_5000_chatgpt.seq.restored
 ```
 
 ### Using Gemini
 ```
-python check_files.py .\data\ERR15993673_5000.seq.txt .\data\ERR15993673_5000_gemini.seq.restored
+python check_files.py .\data\input\ERR15993673_5000.seq.txt .\data\outputs\ERR15993673_5000_gemini.seq.restored
 ```
 
 The script compares both files line by line, ignoring leading and trailing whitespace and empty lines. It prints whether the files are equal or different.
@@ -356,6 +362,10 @@ The script compares both files line by line, ignoring leading and trailing white
 ## About compression_gzip_bz2_lzma_benchmark.py
 This code was built for testing how much the common compression algorithms perform over the example used in this project.
 This is the list of algorithms:
+
+```
+python compression_gzip_bz2_lzma_benchmark.py ./data/input/ERR15993673_5000.seq.txt
+```
 
 - Gzip: Uses the DEFLATE algorithm, balancing speed and compression.
 
@@ -370,7 +380,7 @@ Using the exact same DNA file and the same 5,000 sequences, the only thing that 
 
 In simple terms, this means Gemini was better at spotting longer and more useful repeating DNA patterns, which allowed the compressor to replace more data with fewer tokens. ChatGPT performed reasonably well but was more conservative in the patterns it selected, and DeepSeek likely focused on shorter or less efficient repeats. Since the input data and processing steps were the same, these differences come directly from how each model understands and abstracts repetitive structure in the DNA sequences.
 
-Please, consult the `data` folder to find the files that where generated during running the files: 
+Please, consult the `data` folder to find the files that were generated during running the files:
 - `extract_n.py`
 - `pattern_detector.py`
 - `fastq_compressor.py`

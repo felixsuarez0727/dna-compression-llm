@@ -46,6 +46,7 @@ def decompress_seq(input_file, pattern_file, output_file, log_file):
     save_log(f"Decompressing: {input_file}", filename=log_file)
 
     total = 0
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
 
     with open(input_file, "r", encoding="utf-8") as inp, \
          open(output_file, "w", encoding="utf-8") as out:
@@ -65,8 +66,8 @@ def decompress_seq(input_file, pattern_file, output_file, log_file):
 
 def save_log(line, filename="compression_stats.log"):
     safe_line = line.replace("→", "->")
-    os.makedirs(f"data/", exist_ok=True)
-    with open(f"data/{filename}", "a", encoding="utf-8") as log_file:
+    os.makedirs("data/logs", exist_ok=True)
+    with open(f"data/logs/{filename}", "a", encoding="utf-8") as log_file:
         print(safe_line)
         log_file.write(safe_line + "\n")
 
