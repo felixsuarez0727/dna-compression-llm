@@ -97,7 +97,7 @@ The result is a structured `patterns.json` file. Each entry maps a unique single
 | **Concurrency** | `ThreadPoolExecutor` (for OpenAI/DeepSeek) |
 | **Input Format** | `.fastq` or raw sequence text |
 | **Output Format** | Structured `.json` |
-| **Default Model** | `gpt-4o-mini` / `deepseek-chat` / `gemini-2.0-flash` |
+| **Default Model** | `gpt-4o-mini` / `deepseek-chat` / `gemini-2.5-flash` |
 
 
 ## Installation
@@ -260,7 +260,7 @@ python pattern_detector.py --threads 8 -f .\data\input\ERR15993673_5000.seq.txt 
 ### Using Gemini
 
 ```
-python pattern_detector.py -f .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_gemini_patterns.json -b 80 -p gemini -m gemini-2.0-flash -k [KEY]
+python pattern_detector.py -f .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_gemini_patterns.json -b 80 -p gemini -m gemini-2.5-flash -k [KEY]
 ```
 
 ### All Arguments
@@ -272,7 +272,7 @@ python pattern_detector.py -f .\data\input\ERR15993673_5000.seq.txt -o .\data\ou
 | `--provider` | `-p` | Yes | | LLM provider: `deepseek`, `chatgpt`, or `gemini` |
 | `--output` | `-o` | No | `patterns.json` | Output JSON pattern file |
 | `--batch_size` | `-b` | No | `30` | Number of sequences per API call |
-| `--model` | `-m` | No | Provider default | Model ID. Defaults: `deepseek-chat`, `gpt-4o-mini`, `gemini-2.0-flash` |
+| `--model` | `-m` | No | Provider default | Model ID. Defaults: `deepseek-chat`, `gpt-4o-mini`, `gemini-2.5-flash` |
 | `--max_batches` | | No | `0` (all) | Stop after this many batches |
 | `--threads` | | No | `4` | Parallel threads. Applies to `chatgpt` and `deepseek` only |
 | `--overhead` | | No | `5` | Dictionary entry cost in bytes used during final optimization |
