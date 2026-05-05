@@ -24,7 +24,7 @@ def save_log(line):
 PROVIDER_DEFAULTS = {
     "deepseek": "deepseek-chat",
     "chatgpt": "gpt-4o-mini",
-    "gemini": "gemini-2.5-flash",
+    "gemini": "gemini-2.5-flash-lite",
 }
 
 
