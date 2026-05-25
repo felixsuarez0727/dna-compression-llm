@@ -97,7 +97,7 @@ The result is a structured `patterns.json` file. Each entry maps a unique single
 | **Concurrency** | `ThreadPoolExecutor` (for OpenAI/DeepSeek) |
 | **Input Format** | `.fastq` or raw sequence text |
 | **Output Format** | Structured `.json` |
-| **Default Model** | `gpt-4o-mini` / `deepseek-chat` / `gemini-2.5-flash-lite` |
+| **Default Model** | `gpt-4o-mini` / `deepseek-chat` / `gemini-2.5-flash-lite`/ `DNABERT2` / `HyenaDNA` |
 
 
 ## Installation
@@ -263,6 +263,33 @@ python pattern_detector.py --threads 8 -f .\data\input\ERR15993673_5000.seq.txt 
 python pattern_detector.py -f .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_gemini_patterns.json -b 80 -p gemini -m gemini-2.5-flash-lite -k [KEY]
 ```
 
+### Using HyenaDNA
+
+```
+python pattern_detector.py -f .\data\input\ERR15993673_5000.seq.txt  -o .data\outputs\ERR15993673_5000_hyenadna_patterns.json -b 80 -p hyenadna -m LongSafari/hyenadna-large-1m-seqlen-hf --overhead 101
+```
+
+### Using DNABERT2
+This demands the usage of Docker for Windows Users. Because DNABERT2 needs a library named: "Triton", this library is built to run on Linux enviroments.
+#### Step 1: Using Docker, build the Docker Image
+```
+docker build -t dna-patterns .
+```
+
+
+#### Step 2: Run the Image
+```
+docker run --rm `
+    -v "${PWD}\data:/data" `
+    dna-patterns `
+    -f /data/input/ERR15993673_5000.seq.txt `
+    -o /data/outputs/ERR15993673_5000_dnabert2_patterns.json `
+    -b 80 `
+    -p dnabert2 `
+    -m zhihan1996/DNABERT-2-117M `
+    --overhead 101
+```
+
 ### All Arguments
 
 | Argument | Short | Required | Default | Description |
@@ -300,6 +327,16 @@ python fastq_compressor.py -i .\data\input\ERR15993673_5000.seq.txt -o .\data\ou
 python fastq_compressor.py -i .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\ERR15993673_5000_gemini.seq.compress -p .\data\outputs\ERR15993673_5000_gemini_patterns.json
 ```
 
+### Using HyenaDNA
+```
+python .\fastq_compressor.py -i .\data\input\ERR15993673_5000.seq.txt -p .\data\outputs\ERR15993673_5000_hyenadna_patterns.json -o .\data\outputs\ERR15993673_5000_hyenadna.seq.compress
+```
+
+### Using DNABERT2
+```
+python .\fastq_compressor.py -i .\data\input\ERR15993673_5000.seq.txt -p .\data\outputs\ERR15993673_5000_dnabert2_patterns.json -o .\data\outputs\ERR15993673_5000_dnabert2.seq.compress
+```
+
 ### All Arguments
 | Argument | Short | Description |
 |---|---|---|
@@ -328,6 +365,17 @@ python fastq_decompressor.py -i .\data\outputs\ERR15993673_5000_chatgpt.seq.comp
 python fastq_decompressor.py -i .\data\outputs\ERR15993673_5000_gemini.seq.compress -o .\data\outputs\ERR15993673_5000_gemini.seq.restored -p .\data\outputs\ERR15993673_5000_gemini_patterns.json
 ```
 
+### Using HyenaDNA
+```
+python fastq_decompressor.py -i .\data\outputs\ERR15993673_5000_hyenadna.seq.compress -o .\data\outputs\ERR15993673_5000_hyenadna.seq.restored -p .\data\outputs\ERR15993673_5000_hyenadna_patterns.json
+
+```
+
+### Using DNABERT2
+```
+python fastq_decompressor.py -i .\data\outputs\ERR15993673_5000_dnabert2.seq.compress -o .\data\outputs\ERR15993673_5000_dnabert2.seq.restored -p .\data\outputs\ERR15993673_5000_dnabert2_patterns.json
+```
+
 | Argument | Short | Description |
 |---|---|---|
 | `--input` | `-i` | Input compressed file |
@@ -354,6 +402,16 @@ python check_files.py .\data\input\ERR15993673_5000.seq.txt .\data\outputs\ERR15
 ### Using Gemini
 ```
 python check_files.py .\data\input\ERR15993673_5000.seq.txt .\data\outputs\ERR15993673_5000_gemini.seq.restored
+```
+
+### Using HydeaDNA
+```
+python check_files.py .\data\input\ERR15993673_5000.seq.txt .\data\outputs\ERR15993673_5000_hyenadna.seq.restored
+```
+
+### Using DNABERT2
+```
+python check_files.py .\data\input\ERR15993673_5000.seq.txt .\data\outputs\ERR15993673_5000_dnabert2.seq.restored
 ```
 
 The script compares both files line by line, ignoring leading and trailing whitespace and empty lines. It prints whether the files are equal or different.

@@ -4,8 +4,9 @@ import sys
 import json
 import re
 import os
+import hashlib
 from pathlib import Path
-from collections import Counter
+from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 MICRO_TOKEN_POOL = list("bdefhijklmoprsvwxyz")
@@ -25,7 +26,357 @@ PROVIDER_DEFAULTS = {
     "deepseek": "deepseek-chat",
     "chatgpt": "gpt-4o-mini",
     "gemini": "gemini-2.5-flash-lite",
+    "dnabert2": "zhihan1996/DNABERT-2-117M",
+    "hyenadna": "LongSafari/hyenadna-large-1m-seqlen-hf",
 }
+
+
+
+
+# ─────────────────────────────────────────────────────────────
+# DNABERT-2 helpers
+# ─────────────────────────────────────────────────────────────
+
+def _load_dnabert2(model_id):
+    try:
+        from transformers import AutoTokenizer, AutoModel
+        import torch
+    except ImportError:
+        save_log(
+            "Error: 'transformers' and 'torch' are required for DNABERT-2.\n"
+            "  pip install transformers torch"
+        )
+        sys.exit(1)
+
+    save_log(f"  Loading DNABERT-2 from '{model_id}' (may download on first run)...")
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    model = AutoModel.from_pretrained(model_id, trust_remote_code=True)
+    model.eval()
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = model.to(device)
+    save_log(f"  DNABERT-2 loaded on {device.upper()}.")
+
+    return {"tokenizer": tokenizer, "model": model, "device": device, "torch": torch}
+
+
+def _dnabert2_tokenize_sequences(client, sequences):
+    tokenizer = client["tokenizer"]
+    SPECIAL = {"[CLS]", "[SEP]", "[PAD]", "[MASK]", "[UNK]"}
+    all_tokens = []
+    for seq in sequences:
+        ids = tokenizer(seq, return_tensors="pt", padding=False)["input_ids"][0]
+        tokens = tokenizer.convert_ids_to_tokens(ids)
+        dna_tokens = [t for t in tokens if t not in SPECIAL]
+        all_tokens.append(dna_tokens)
+    return all_tokens
+
+
+def _find_tandem_runs_in_tokens(token_list, min_repeats=2):
+    runs = []
+    i = 0
+    while i < len(token_list):
+        j = i + 1
+        while j < len(token_list) and token_list[j] == token_list[i]:
+            j += 1
+        run_len = j - i
+        if run_len >= min_repeats:
+            runs.append((token_list[i].upper(), run_len, i))
+        i = j
+    return runs
+
+
+def _build_attention_patterns(client, sequences, max_seq_len=256):
+    tokenizer = client["tokenizer"]
+    model     = client["model"]
+    device    = client["device"]
+    torch     = client["torch"]
+
+    pattern_counter = Counter()
+    SPECIAL = {"[CLS]", "[SEP]", "[PAD]", "[MASK]"}
+
+    for seq in sequences:
+        seq = seq[:max_seq_len]
+        inputs = tokenizer(seq, return_tensors="pt", padding=True).to(device)
+        try:
+            with torch.no_grad():
+                outputs = model(**inputs, output_attentions=True)
+
+            attentions = None
+            if hasattr(outputs, "attentions") and outputs.attentions is not None:
+                attentions = outputs.attentions
+            elif isinstance(outputs, tuple):
+                for item in outputs:
+                    if (
+                        isinstance(item, tuple)
+                        and len(item) > 0
+                        and isinstance(item[0], torch.Tensor)
+                        and item[0].dim() == 4
+                    ):
+                        attentions = item
+                        break
+
+            tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+            dna_tokens = [(i, t) for i, t in enumerate(tokens) if t not in SPECIAL]
+
+            if attentions is not None:
+                attn_layers = torch.stack(list(attentions))
+                avg_attn = attn_layers.mean(dim=(0, 1, 2))
+                col_sum = avg_attn.sum(dim=0)
+            else:
+                hidden = None
+                if isinstance(outputs, tuple):
+                    for item in outputs:
+                        if isinstance(item, torch.Tensor) and item.dim() == 3:
+                            hidden = item
+                            break
+                elif hasattr(outputs, "last_hidden_state"):
+                    hidden = outputs.last_hidden_state
+                if hidden is None:
+                    continue
+                col_sum = hidden[0].norm(dim=-1)
+
+            top_k = min(10, len(dna_tokens))
+            if top_k == 0:
+                continue
+
+            _, top_indices = torch.topk(col_sum[:len(tokens)], top_k)
+            top_set = set(top_indices.tolist())
+
+            for idx, (pos, tok) in enumerate(dna_tokens):
+                if pos in top_set:
+                    for window in range(1, 4):
+                        end = idx + window
+                        if end <= len(dna_tokens):
+                            candidate = "".join(t for _, t in dna_tokens[idx:end]).upper()
+                            if len(candidate) >= 4 and re.fullmatch(r"[ACGTN]+", candidate):
+                                pattern_counter[candidate] += 1
+
+        except Exception as e:
+            save_log(f"  [DNABERT-2] Atencion no disponible para una secuencia: {e}")
+            continue
+
+    return pattern_counter
+
+
+def analyze_batch_dnabert2(client, sequences, batch_num):
+    save_log(f"  [DNABERT-2] Batch #{batch_num}: tokenizing {len(sequences)} sequences...")
+
+    all_token_lists = _dnabert2_tokenize_sequences(client, sequences)
+    pattern_counter = Counter()
+
+    for token_list in all_token_lists:
+        for tok in token_list:
+            tok_upper = tok.upper()
+            if len(tok_upper) >= 4 and re.fullmatch(r"[ACGTN]+", tok_upper):
+                pattern_counter[tok_upper] += 1
+
+        runs = _find_tandem_runs_in_tokens(token_list, min_repeats=2)
+        for unit, reps, _ in runs:
+            if len(unit) >= 4 and re.fullmatch(r"[ACGTN]+", unit):
+                for r in range(2, reps + 1):
+                    pattern_counter[unit * r] += 1
+                pattern_counter[unit] += reps
+
+    save_log(f"  [DNABERT-2] Batch #{batch_num}: extracting attention motifs...")
+    attn_patterns = _build_attention_patterns(client, sequences)
+    pattern_counter.update(attn_patterns)
+
+    lines = [
+        f"{pat}:{cnt}"
+        for pat, cnt in pattern_counter.most_common(100)
+        if len(pat) >= 4 and re.fullmatch(r"[ACGTN]+", pat)
+    ]
+    return "\n".join(lines) if lines else None
+
+
+def analyze_synthesis_dnabert2(client, all_candidates, top_kmers):
+    tokenizer = client["tokenizer"]
+    SPECIAL = {"[CLS]", "[SEP]", "[PAD]", "[MASK]"}
+
+    boosted = {}
+    for seq, count in all_candidates.items():
+        ids = tokenizer(seq, return_tensors="pt", padding=False)["input_ids"][0]
+        tokens = [t for t in tokenizer.convert_ids_to_tokens(ids) if t not in SPECIAL]
+        boost = 1.5 if len(tokens) == 1 else 1.0
+        boosted[seq] = int(count * boost)
+
+    lines = [
+        f"{pat}:{cnt}"
+        for pat, cnt in sorted(boosted.items(), key=lambda x: -x[1])[:80]
+        if re.fullmatch(r"[ACGTN]+", pat)
+    ]
+    return "\n".join(lines)
+
+
+# ─────────────────────────────────────────────────────────────
+# HyenaDNA helpers
+# ─────────────────────────────────────────────────────────────
+
+def _load_hyenadna(model_id):
+    try:
+        from transformers import AutoTokenizer, AutoModel
+        import torch
+    except ImportError:
+        save_log(
+            "Error: 'transformers' and 'torch' are required for HyenaDNA.\n"
+            "  pip install transformers torch"
+        )
+        sys.exit(1)
+
+    save_log(f"  Loading HyenaDNA from '{model_id}' (may download on first run)...")
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+    model = AutoModel.from_pretrained(model_id, trust_remote_code=True)
+    model.eval()
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = model.to(device)
+    save_log(f"  HyenaDNA loaded on {device.upper()}.")
+
+    return {"tokenizer": tokenizer, "model": model, "device": device, "torch": torch}
+
+
+def _mine_long_repeats(sequences, min_len=24, max_len=512, stride=4,
+                       min_occurrences=3, max_candidates=20000):
+    save_log("  [HyenaDNA] Mining long repeated substrings...")
+    candidates = defaultdict(int)
+
+    lengths = [24, 32, 48, 64, 96, 128, 160, 192, 256, 384, 512]
+    lengths = [x for x in lengths if x <= max_len]
+
+    for seq in sequences:
+        seq_len = len(seq)
+        for k in lengths:
+            if seq_len < k:
+                continue
+            for i in range(0, seq_len - k + 1, stride):
+                chunk = seq[i:i + k]
+                if "N" in chunk and chunk.count("N") > (k // 8):
+                    continue
+                candidates[chunk] += 1
+
+        for unit_len in range(4, 65):
+            for start in range(0, seq_len - unit_len):
+                unit = seq[start:start + unit_len]
+                repeats = 1
+                pos = start + unit_len
+                while pos + unit_len <= seq_len:
+                    if seq[pos:pos + unit_len] == unit:
+                        repeats += 1
+                        pos += unit_len
+                    else:
+                        break
+                if repeats >= 3:
+                    repeated = unit * repeats
+                    if len(repeated) >= min_len:
+                        candidates[repeated] += repeats * 3
+
+    filtered = {}
+    for pattern, count in candidates.items():
+        if count < min_occurrences:
+            continue
+        gain = (len(pattern) - 1) * count
+        if gain <= len(pattern):
+            continue
+        filtered[pattern] = {"count": count, "gain": gain, "length": len(pattern)}
+
+    sorted_patterns = sorted(
+        filtered.items(),
+        key=lambda x: (x[1]["gain"], x[1]["length"], x[1]["count"]),
+        reverse=True,
+    )[:max_candidates]
+
+    save_log(f"  [HyenaDNA] Long-repeat candidates retained: {len(sorted_patterns)}")
+    return sorted_patterns
+
+
+def _hyenadna_embeddings(client, sequences, max_length=1024):
+    tokenizer = client["tokenizer"]
+    model     = client["model"]
+    device    = client["device"]
+    torch     = client["torch"]
+
+    embeddings = []
+    for seq in sequences:
+        seq = seq[:max_length]
+        inputs = tokenizer(
+            seq, return_tensors="pt", truncation=True, max_length=max_length
+        ).to(device)
+        with torch.no_grad():
+            outputs = model(**inputs)
+        hidden = outputs.last_hidden_state[0]
+        embeddings.append(hidden.mean(dim=0).cpu().numpy())
+
+    return embeddings
+
+
+def _deduplicate_compression_patterns(sorted_patterns):
+    save_log("  [HyenaDNA] Deduplicating overlapping patterns...")
+    kept = {}
+    fingerprints = set()
+
+    for pattern, meta in sorted_patterns:
+        fp = hashlib.md5(pattern[:64].encode()).hexdigest()
+        if fp in fingerprints:
+            continue
+        redundant = any(
+            len(existing) > len(pattern) and pattern in existing
+            for existing in kept
+        )
+        if redundant:
+            continue
+        kept[pattern] = meta
+        fingerprints.add(fp)
+
+    save_log(f"  [HyenaDNA] Final deduplicated patterns: {len(kept)}")
+    return kept
+
+
+def analyze_batch_hyenadna(client, sequences, batch_num):
+    save_log(f"  [HyenaDNA] Batch #{batch_num}: compression-oriented analysis...")
+
+    try:
+        _ = _hyenadna_embeddings(client, sequences[:8])
+    except Exception as e:
+        save_log(f"  [HyenaDNA] embedding warning: {e}")
+
+    candidates = _mine_long_repeats(
+        sequences, min_len=24, max_len=512, stride=8,
+        min_occurrences=2, max_candidates=5000,
+    )
+    dedup = _deduplicate_compression_patterns(candidates)
+
+    lines = []
+    for pattern, meta in sorted(
+        dedup.items(), key=lambda x: (x[1]["gain"], x[1]["length"]), reverse=True
+    )[:200]:
+        lines.append(f"{pattern}:{meta['count']}")
+
+    save_log(f"  [HyenaDNA] Batch #{batch_num}: {len(lines)} high-value patterns")
+    return "\n".join(lines)
+
+
+def analyze_synthesis_hyenadna(client, all_candidates, top_kmers):
+    save_log("  [HyenaDNA] Compression-oriented synthesis...")
+
+    rescored = {}
+    for seq, count in all_candidates.items():
+        gain = (len(seq) - 1) * count
+        tandem_bonus = 1.0
+        unit, reps = find_tandem_unit(seq)
+        if unit:
+            tandem_bonus += min(reps * 0.25, 4.0)
+        length_bonus = 1.0 + (len(seq) / 128)
+        rescored[seq] = int(gain * tandem_bonus * length_bonus)
+
+    lines = []
+    for seq, score in sorted(rescored.items(), key=lambda x: (x[1], len(x[0])), reverse=True)[:400]:
+        if len(seq) >= 16:
+            lines.append(f"{seq}:{score}")
+
+    save_log(f"  [HyenaDNA] synthesis retained {len(lines)} patterns")
+    return "\n".join(lines)
+
 
 
 def build_client(provider, api_key):
@@ -37,6 +388,10 @@ def build_client(provider, api_key):
     if provider == "gemini":
         from google import genai
         return genai.Client(api_key=api_key)
+    if provider == "dnabert2":
+        return _load_dnabert2(PROVIDER_DEFAULTS["dnabert2"])
+    if provider == "hyenadna":
+        return _load_hyenadna(PROVIDER_DEFAULTS["hyenadna"])
     raise ValueError(f"Unknown provider: {provider}")
 
 
@@ -161,6 +516,11 @@ def parse_model_response(text):
 
 
 def analyze_batch_with_context(client, provider, model_id, sequences, batch_num, top_kmers):
+    if provider == "dnabert2":
+        return analyze_batch_dnabert2(client, sequences, batch_num)
+    if provider == "hyenadna":
+        return analyze_batch_hyenadna(client, sequences, batch_num)
+
     sequences_block = "\n".join(sequences)
     kmer_context = format_kmers_for_prompt(top_kmers)
 
@@ -197,6 +557,11 @@ def analyze_batch_with_context(client, provider, model_id, sequences, batch_num,
 
 
 def analyze_batch_synthesis(client, provider, model_id, all_candidates, top_kmers):
+    if provider == "dnabert2":
+        return analyze_synthesis_dnabert2(client, all_candidates, top_kmers)
+    if provider == "hyenadna":
+        return analyze_synthesis_hyenadna(client, all_candidates, top_kmers)
+
     candidates_block = "\n".join(
         f"{seq}: {count} times"
         for seq, count in sorted(all_candidates.items(), key=lambda x: -x[1])[:80]
@@ -410,12 +775,12 @@ def save_to_json(data, filename):
 def main():
     parser = argparse.ArgumentParser(description="FASTQ Pattern Detector using LLMs")
     parser.add_argument("--file", "-f", required=True, help="Path to the sequence text file")
-    parser.add_argument("--key", "-k", required=True, help="API key for the selected provider")
+    parser.add_argument("--key", "-k", default="local", help="API key for the selected provider (not required for dnabert2/hyenadna)")
     parser.add_argument(
         "--provider", "-p",
         required=True,
-        choices=["deepseek", "chatgpt", "gemini"],
-        help="LLM provider to use",
+        choices=["deepseek", "chatgpt", "gemini", "dnabert2", "hyenadna"],
+        help="LLM/DNA model provider to use",
     )
     parser.add_argument("--output", "-o", default="patterns.json", help="Output JSON file")
     parser.add_argument("--batch_size", "-b", type=int, default=30, help="Sequences per API call")
@@ -429,6 +794,10 @@ def main():
     args = parser.parse_args()
 
     model_id = args.model or PROVIDER_DEFAULTS[args.provider]
+
+    if args.model and args.provider in ("dnabert2", "hyenadna"):
+        PROVIDER_DEFAULTS[args.provider] = args.model
+
     client = build_client(args.provider, args.key)
 
     ts = time.strftime("%Y%m%d_%H%M%S")
@@ -470,7 +839,19 @@ def main():
             break
         all_batches.append((len(all_batches) + 1, all_sequences[i:i + args.batch_size]))
 
-    if args.provider in ("chatgpt", "deepseek") and args.threads > 1:
+    if args.provider in ("dnabert2", "hyenadna"):
+        # Local GPU/CPU-bound models: always sequential
+        for batch_num, batch in all_batches:
+            raw = analyze_batch_with_context(client, args.provider, model_id, batch, batch_num, top_kmers)
+            if raw:
+                parsed = parse_model_response(raw)
+                save_log(f"  Batch #{batch_num} -> {len(parsed)} patterns detected")
+                for pat, count in parsed.items():
+                    aggregated_patterns[pat] = aggregated_patterns.get(pat, 0) + count
+            else:
+                save_log(f"  Batch #{batch_num} -> no result")
+
+    elif args.provider in ("chatgpt", "deepseek") and args.threads > 1:
         save_log(f"  Using {args.threads} parallel threads for {len(all_batches)} batches...")
 
         def run_batch(batch_num, batch):
