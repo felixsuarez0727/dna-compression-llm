@@ -1,3 +1,9 @@
-Download the testing files from: https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&acc=ERR15993673
+The real FASTQ test data is not committed to the repository.
 
-Then place the FASTQ file alone in this folder: /fastq_files
+From the repository root in PowerShell, download the forward read for
+ERR15993673 into this directory:
+
+curl.exe --fail --location "https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR159/073/ERR15993673/ERR15993673_1.fastq.gz" --output .\fastq_files\input\ERR15993673.fastq.gz
+
+The source accession is available at:
+https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&acc=ERR15993673

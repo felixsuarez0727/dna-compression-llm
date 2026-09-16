@@ -48,8 +48,8 @@ uv sync --group test
 uv run --locked --group test pytest
 ```
 
-GitHub Actions runs this suite on Python 3.10 and 3.11 for Linux and Windows
-on every push and pull request.
+GitHub Actions runs this suite on Ubuntu with Python 3.10 on every push and
+pull request.
 
 ## Commands
 
@@ -68,44 +68,106 @@ Run all commands as `uv run dna-compress <command>`:
 
 Use `uv run dna-compress <command> --help` for the full argument list.
 
+## Demo Video
+
+Watch the [pipeline demonstration](docs/demo/dna-compression-pipeline-demo.mp4)
+for an end-to-end run of the workflow below.
+
 ## Typical Workflow
 
-Download a FASTQ file from the
-[NCBI Trace Archive](https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&acc=ERR15993673)
-and place it under `fastq_files/input/`.
+This example processes a public FASTQ read through sequence extraction,
+pattern detection, lossless compression, restoration, and byte-level
+integrity verification. It uses the forward read from
+[`ERR15993673`](https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&acc=ERR15993673).
+Raw sequencing files are downloaded on demand because they are too large to
+include in the repository. Docker Desktop must be running for the DNABERT-2
+steps; the first image build downloads the model and requires an internet
+connection. Run each command after the preceding step completes.
 
-Extract sequence lines:
+### 1. Install dependencies
+
+```powershell
+uv sync
+```
+
+### 2. Create the input directory
+
+```powershell
+New-Item -ItemType Directory -Force .\fastq_files\input | Out-Null
+```
+
+### 3. Download the FASTQ input
+
+```powershell
+curl.exe --fail --location "https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR159/073/ERR15993673/ERR15993673_1.fastq.gz" --output .\fastq_files\input\ERR15993673.fastq.gz
+```
+
+### 4. Verify the downloaded file
+
+```powershell
+(Get-FileHash .\fastq_files\input\ERR15993673.fastq.gz -Algorithm MD5).Hash
+```
+
+Expected MD5: `36005C9FA104ECFF3390F59F92EA9EBE`.
+
+### 5. Extract 5,000 sequence lines
 
 ```powershell
 uv run dna-compress extract --input .\fastq_files\input\ERR15993673.fastq.gz --output .\data\input\ERR15993673_5000.seq.txt --n 5000
 ```
 
-Estimate an appropriate detector overhead without an API call:
+### 6. Estimate dictionary overhead
 
 ```powershell
 uv run dna-compress analyze --file .\data\input\ERR15993673_5000.seq.txt
 ```
 
-Detect patterns with a hosted provider. Install the `llm` extra first and pass
-the provider key through `--key`:
+### 7. Build the local-model image
 
 ```powershell
-uv run dna-compress detect -f .\data\input\ERR15993673_5000.seq.txt -o .\data\outputs\patterns.json -p gemini -b 80 -k $env:GEMINI_API_KEY
+docker build -t dna-patterns .
 ```
 
-Compress and restore using the generated JSON dictionary:
+### 8. Detect patterns with DNABERT-2
 
 ```powershell
-uv run dna-compress compress -i .\data\input\ERR15993673_5000.seq.txt -p .\data\outputs\patterns.json -o .\data\outputs\sequences.compress
-uv run dna-compress decompress -i .\data\outputs\sequences.compress -p .\data\outputs\patterns.json -o .\data\outputs\sequences.restored
+docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns detect -f /data/input/ERR15993673_5000.seq.txt -o /data/outputs/ERR15993673_5000_dnabert2_patterns.json -p dnabert2 -b 80 --overhead 101
 ```
 
-`compare` intentionally keeps the original whitespace-tolerant behavior. For
-a strict lossless check in PowerShell, compare hashes:
+### 9. Compress the sequences
 
 ```powershell
-(Get-FileHash .\data\input\ERR15993673_5000.seq.txt -Algorithm SHA256).Hash -eq (Get-FileHash .\data\outputs\sequences.restored -Algorithm SHA256).Hash
+docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns compress -i /data/input/ERR15993673_5000.seq.txt -p /data/outputs/ERR15993673_5000_dnabert2_patterns.json -o /data/outputs/ERR15993673_5000_dnabert2.compress
 ```
+
+### 10. Restore the sequences
+
+```powershell
+docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns decompress -i /data/outputs/ERR15993673_5000_dnabert2.compress -p /data/outputs/ERR15993673_5000_dnabert2_patterns.json -o /data/outputs/ERR15993673_5000_dnabert2.restored
+```
+
+### 11. Compare output sizes
+
+```powershell
+Get-Item .\data\input\ERR15993673_5000.seq.txt, .\data\outputs\ERR15993673_5000_dnabert2.compress, .\data\outputs\ERR15993673_5000_dnabert2.restored | Select-Object Name, Length
+```
+
+### 12. Verify lossless restoration
+
+```powershell
+$originalHash = (Get-FileHash .\data\input\ERR15993673_5000.seq.txt -Algorithm SHA256).Hash
+$restoredHash = (Get-FileHash .\data\outputs\ERR15993673_5000_dnabert2.restored -Algorithm SHA256).Hash
+if ($originalHash -ne $restoredHash) { throw "Restoration did not preserve the original file" }
+"Restoration is byte-identical: True"
+```
+
+The paired reverse read is available as `ERR15993673_2.fastq.gz`; download it
+from the same ENA directory and change the input and output names if you want
+to process it instead. The `extract` command automatically handles both
+`.fastq` and `.fastq.gz` input.
+
+`compare` intentionally keeps the original whitespace-tolerant behavior, so
+the SHA-256 comparison above is the strict losslessness check.
 
 ## Detection Providers
 
@@ -124,17 +186,12 @@ locked optional environment supplied by this repository.
 ## Docker
 
 The Docker image installs every locked optional dependency, pre-downloads
-DNABERT-2, and starts at `dna-compress detect` by default.
+DNABERT-2, and starts at `dna-compress detect` by default. The workflow above
+uses the image for detection, compression, and decompression.
 
 ```powershell
 docker build -t dna-patterns .
-docker run --rm -v "${PWD}\data:/data" dna-patterns --help
-```
-
-For a DNABERT-2 detection run:
-
-```powershell
-docker run --rm -v "${PWD}\data:/data" dna-patterns -f /data/input/ERR15993673_5000.seq.txt -o /data/outputs/dnabert2_patterns.json -p dnabert2 -b 80 --overhead 101
+docker run --rm --entrypoint dna-compress dna-patterns --help
 ```
 
 The container writes logs under the mounted `/data/logs` directory. Set
@@ -160,8 +217,7 @@ known scope boundaries.
 - Hosted model output can vary over time, even when a temperature setting is
   fixed. Once a pattern JSON is saved, compression and decompression are
   deterministic.
-- The detector's historical savings estimate and the overhead diagnostic use
-  different token-cost assumptions. This organizational refactor preserves
-  that existing behavior.
+- The detector's savings estimate and the overhead diagnostic use different
+  token-cost assumptions.
 - The bundled test data is from `ERR15993673`, a raw metagenomic sequencing
   data set from a human vaginal sample in the NCBI Trace Archive.
