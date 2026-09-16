@@ -38,6 +38,19 @@ uv sync --all-extras
 `pyproject.toml` and `uv.lock` are the project's dependency source of truth.
 There is no maintained `requirements.txt` file.
 
+## Testing
+
+The test suite covers offline workflows and simulated providers, so it does
+not require an API key or model download:
+
+```powershell
+uv sync --group test
+uv run --locked --group test pytest
+```
+
+GitHub Actions runs this suite on Python 3.10 and 3.11 for Linux and Windows
+on every push and pull request.
+
 ## Commands
 
 Run all commands as `uv run dna-compress <command>`:

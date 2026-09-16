@@ -45,6 +45,16 @@ offline commands without installing client or model libraries.
 The `local-models` extra intentionally retains packages that may be imported
 by remote DNABERT-2 and HyenaDNA code through `trust_remote_code=True`.
 
+## Tests and CI
+
+The `test` dependency group installs pytest. Tests cover the offline CLI,
+compression round trips, FASTQ utilities, overhead analysis, provider request
+adapters, and a simulated detection run. No API key, model download, or Docker
+daemon is required.
+
+GitHub Actions runs `uv lock --check`, synchronizes the test group, executes
+pytest, and builds the package on Python 3.10 and 3.11 for Linux and Windows.
+
 ## Artifacts
 
 Pattern dictionaries are JSON mappings from a token to metadata. The final
@@ -73,6 +83,5 @@ the Docker image sets it to `/data/logs` so logs persist in the mounted volume.
 - The detector estimates savings with `seq_len - 1`; overhead analysis uses
   `seq_len - 3` for its `<X>` token model. Resolving that discrepancy is a
   separate algorithmic change.
-- The project is CPU-only by default. CUDA support, CI, linting, type checks,
-  PyPI publication, and automatic `.env` loading are intentionally out of
-  scope for this reorganization.
+- The project is CPU-only by default. CUDA support, linting, type checks, PyPI
+  publication, and automatic `.env` loading are intentionally out of scope.
