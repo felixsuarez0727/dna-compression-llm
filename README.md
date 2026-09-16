@@ -113,13 +113,13 @@ Expected MD5: `36005C9FA104ECFF3390F59F92EA9EBE`.
 ### 5. Extract 5,000 sequence lines
 
 ```powershell
-uv run dna-compress extract --input .\fastq_files\input\ERR15993673.fastq.gz --output .\data\input\ERR15993673_5000.seq.txt --n 5000
+uv run dna-compress extract --input .\fastq_files\input\ERR15993673.fastq.gz --output .\data\runs\ERR15993673_5000.seq.txt --n 5000
 ```
 
 ### 6. Estimate dictionary overhead
 
 ```powershell
-uv run dna-compress analyze --file .\data\input\ERR15993673_5000.seq.txt
+uv run dna-compress analyze --file .\data\runs\ERR15993673_5000.seq.txt
 ```
 
 ### 7. Build the local-model image
@@ -131,13 +131,13 @@ docker build -t dna-patterns .
 ### 8. Detect patterns with DNABERT-2
 
 ```powershell
-docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns detect -f /data/input/ERR15993673_5000.seq.txt -o /data/outputs/ERR15993673_5000_dnabert2_patterns.json -p dnabert2 -b 80 --overhead 101
+docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns detect -f /data/runs/ERR15993673_5000.seq.txt -o /data/outputs/ERR15993673_5000_dnabert2_patterns.json -p dnabert2 -b 80 --overhead 101
 ```
 
 ### 9. Compress the sequences
 
 ```powershell
-docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns compress -i /data/input/ERR15993673_5000.seq.txt -p /data/outputs/ERR15993673_5000_dnabert2_patterns.json -o /data/outputs/ERR15993673_5000_dnabert2.compress
+docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns compress -i /data/runs/ERR15993673_5000.seq.txt -p /data/outputs/ERR15993673_5000_dnabert2_patterns.json -o /data/outputs/ERR15993673_5000_dnabert2.compress
 ```
 
 ### 10. Restore the sequences
@@ -149,13 +149,13 @@ docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns de
 ### 11. Compare output sizes
 
 ```powershell
-Get-Item .\data\input\ERR15993673_5000.seq.txt, .\data\outputs\ERR15993673_5000_dnabert2.compress, .\data\outputs\ERR15993673_5000_dnabert2.restored | Select-Object Name, Length
+Get-Item .\data\runs\ERR15993673_5000.seq.txt, .\data\outputs\ERR15993673_5000_dnabert2.compress, .\data\outputs\ERR15993673_5000_dnabert2.restored | Select-Object Name, Length
 ```
 
 ### 12. Verify lossless restoration
 
 ```powershell
-$originalHash = (Get-FileHash .\data\input\ERR15993673_5000.seq.txt -Algorithm SHA256).Hash
+$originalHash = (Get-FileHash .\data\runs\ERR15993673_5000.seq.txt -Algorithm SHA256).Hash
 $restoredHash = (Get-FileHash .\data\outputs\ERR15993673_5000_dnabert2.restored -Algorithm SHA256).Hash
 if ($originalHash -ne $restoredHash) { throw "Restoration did not preserve the original file" }
 "Restoration is byte-identical: True"
