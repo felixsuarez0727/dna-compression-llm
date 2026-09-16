@@ -1,39 +1,32 @@
 FROM python:3.10-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    DNA_COMPRESSION_LOG_DIR=/data/logs \
+    PYTHONUNBUFFERED=1 \
+    UV_NO_DEV=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
-        curl \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+COPY --from=ghcr.io/astral-sh/uv:0.12.15 /uv /uvx /bin/
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir \
-    torch==2.2.2 \
-    --index-url https://download.pytorch.org/whl/cpu
+COPY pyproject.toml uv.lock README.md ./
+RUN uv sync --locked --all-extras --no-install-project
 
-RUN pip install --no-cache-dir "numpy==1.26.4"
+COPY dna_compression ./dna_compression
+RUN uv sync --locked --all-extras
 
-RUN pip install --no-cache-dir \
-    "transformers==4.29.2" \
-    "huggingface-hub==0.16.4" \
-    "tokenizers==0.13.3" \
-    "sentencepiece==0.2.0" \
-    "einops==0.8.0" \
-    "accelerate==0.27.2"
-
-RUN pip install --no-cache-dir \
-    "openai==1.30.1" \
-    "google-genai==0.7.0"
-
-RUN python -c "from huggingface_hub import snapshot_download; \
+RUN .venv/bin/python -c "from huggingface_hub import snapshot_download; \
 p = snapshot_download(repo_id='zhihan1996/DNABERT-2-117M'); \
 print('Model Downloaded:', p)"
 
-COPY pattern_detector.py .
+ENV PATH="/app/.venv/bin:$PATH"
 
 VOLUME ["/data"]
 
-ENTRYPOINT ["python", "pattern_detector.py"]
+ENTRYPOINT ["dna-compress", "detect"]
 CMD ["--help"]

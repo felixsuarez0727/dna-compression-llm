@@ -247,7 +247,7 @@
     <div class="title-block">
       <div class="eyebrow">System methodology · Lossless compression</div>
       <div class="title">FASTQ Compression <em>Pipeline</em></div>
-      <div class="subtitle-line">Six-module workflow &mdash; <strong>LLM-guided</strong> pattern discovery &middot; deterministic validation &middot; guaranteed losslessness</div>
+      <div class="subtitle-line">Six-command workflow &mdash; <strong>LLM-guided</strong> pattern discovery &middot; deterministic validation &middot; guaranteed losslessness</div>
     </div>
     <div class="dataset-badge">
       <div class="dataset-pill">Dataset <strong>ERR15993673</strong></div>
@@ -281,85 +281,85 @@
 
     <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
 
-    <!-- Module 1: extract_n.py -->
+    <!-- Command 1: dna-compress extract -->
     <div class="stage">
       <div class="circle-outer">
-        <div class="circle c-teal">1<div class="stage-badge">M1</div></div>
+        <div class="circle c-teal">1<div class="stage-badge">C1</div></div>
       </div>
       <div class="label">
         <div class="lname">Extract reads</div>
-        <div class="lsub">Module 1</div>
-        <div class="ldesc">extract_n.py</div>
+        <div class="lsub">Command 1</div>
+        <div class="ldesc">dna-compress<br>extract</div>
       </div>
     </div>
 
     <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
 
-    <!-- Module 2: analyze_overhead.py -->
+    <!-- Command 2: dna-compress analyze -->
     <div class="stage">
       <div class="circle-outer">
-        <div class="circle c-teal">2<div class="stage-badge">M2</div></div>
+        <div class="circle c-teal">2<div class="stage-badge">C2</div></div>
       </div>
       <div class="label">
         <div class="lname">Overhead &delta;</div>
-        <div class="lsub">Module 2</div>
-        <div class="ldesc">analyze_overhead.py</div>
+        <div class="lsub">Command 2</div>
+        <div class="ldesc">dna-compress<br>analyze</div>
       </div>
     </div>
 
     <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
 
-    <!-- Module 3: pattern_detector.py -->
+    <!-- Command 3: dna-compress detect -->
     <div class="stage">
       <div class="circle-outer">
-        <div class="circle c-amber">3<div class="stage-badge">M3</div></div>
+        <div class="circle c-amber">3<div class="stage-badge">C3</div></div>
       </div>
       <div class="label">
         <div class="lname">Pattern detection</div>
-        <div class="lsub">Module 3</div>
-        <div class="ldesc">pattern_detector.py</div>
+        <div class="lsub">Command 3</div>
+        <div class="ldesc">dna-compress<br>detect</div>
       </div>
     </div>
 
     <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
 
-    <!-- Module 4: fastq_compressor.py -->
+    <!-- Command 4: dna-compress compress -->
     <div class="stage">
       <div class="circle-outer">
-        <div class="circle c-coral">4<div class="stage-badge">M4</div></div>
+        <div class="circle c-coral">4<div class="stage-badge">C4</div></div>
       </div>
       <div class="label">
         <div class="lname">Compression</div>
-        <div class="lsub">Module 4</div>
-        <div class="ldesc">fastq_compressor.py</div>
+        <div class="lsub">Command 4</div>
+        <div class="ldesc">dna-compress<br>compress</div>
       </div>
     </div>
 
     <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
 
-    <!-- Module 5: fastq_decompressor.py -->
+    <!-- Command 5: dna-compress decompress -->
     <div class="stage">
       <div class="circle-outer">
-        <div class="circle c-coral">5<div class="stage-badge">M5</div></div>
+        <div class="circle c-coral">5<div class="stage-badge">C5</div></div>
       </div>
       <div class="label">
         <div class="lname">Decompression</div>
-        <div class="lsub">Module 5</div>
-        <div class="ldesc">fastq_decompressor.py</div>
+        <div class="lsub">Command 5</div>
+        <div class="ldesc">dna-compress<br>decompress</div>
       </div>
     </div>
 
     <div class="conn"><div class="cline"></div><div class="carrow"></div></div>
 
-    <!-- Module 6: check_files.py -->
+    <!-- Command 6: dna-compress compare -->
     <div class="stage">
       <div class="circle-outer">
-        <div class="circle c-purple">6<div class="stage-badge">M6</div></div>
+        <div class="circle c-purple">6<div class="stage-badge">C6</div></div>
       </div>
       <div class="label">
         <div class="lname">Integrity check</div>
-        <div class="lsub">Module 6</div>
-        <div class="ldesc">check_files.py</div>
+        <div class="lsub">Command 6</div>
+        <div class="ldesc">dna-compress<br>compare</div>
       </div>
     </div>
 

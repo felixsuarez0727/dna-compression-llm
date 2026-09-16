@@ -1,0 +1,10 @@
+.git
+.venv
+__pycache__
+*.py[cod]
+.vscode
+.history
+data
+fastq_files
+diagrams
+presentation_workspace

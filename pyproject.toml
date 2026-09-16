@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dna-compression-llm"
+version = "0.1.0"
+description = "DNA sequence compression using LLM-guided pattern detection"
+readme = "README.md"
+requires-python = ">=3.10,<3.12"
+dependencies = []
+
+[project.optional-dependencies]
+llm = [
+    "openai==2.29.0",
+    "google-genai==1.68.0",
+]
+local-models = [
+    "numpy==1.26.4",
+    "torch==2.2.2",
+    "transformers==4.29.2",
+    "huggingface-hub==0.16.4",
+    "tokenizers==0.13.3",
+    "sentencepiece==0.2.0",
+    "einops==0.8.0",
+    "accelerate==0.27.2",
+]
+
+[project.scripts]
+dna-compress = "dna_compression.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["dna_compression"]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/data/**",
+    "/diagrams/**",
+    "/fastq_files/**",
+    "/presentation_workspace/**",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

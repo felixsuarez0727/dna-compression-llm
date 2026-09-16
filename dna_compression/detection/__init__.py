@@ -1,0 +1,1 @@
+"""Pattern detection providers, local models, and pipeline."""
