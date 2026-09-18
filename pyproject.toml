@@ -50,7 +50,16 @@ testpaths = ["tests"]
 addopts = "-ra"
 
 [tool.uv.sources]
-torch = { index = "pytorch-cpu" }
+torch = [
+    { index = "pytorch-cu121", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'" },
+    { index = "pytorch-cu121", marker = "sys_platform == 'win32' and platform_machine == 'AMD64'" },
+    { index = "pytorch-cpu", marker = "sys_platform != 'linux' and sys_platform != 'win32' or sys_platform == 'linux' and platform_machine != 'x86_64' or sys_platform == 'win32' and platform_machine != 'AMD64'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
 
 [[tool.uv.index]]
 name = "pytorch-cpu"

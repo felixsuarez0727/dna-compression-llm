@@ -33,7 +33,7 @@ uv sync --all-extras
 | Extra | Includes |
 | --- | --- |
 | `llm` | OpenAI-compatible clients, DeepSeek, and Google Gemini |
-| `local-models` | CPU PyTorch, Transformers, DNABERT-2, and HyenaDNA dependencies |
+| `local-models` | CUDA 12.1 PyTorch on supported Windows/Linux systems, CPU PyTorch elsewhere, Transformers, DNABERT-2, and HyenaDNA dependencies |
 
 `pyproject.toml` and `uv.lock` are the project's dependency source of truth.
 There is no maintained `requirements.txt` file.
@@ -132,8 +132,17 @@ docker build -t dna-patterns .
 
 ### 8. Detect patterns with DNABERT-2
 
+Use this command when no NVIDIA GPU is available to Docker:
+
 ```powershell
 docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns detect -f /data/runs/ERR15993673_5000.seq.txt -o /data/outputs/ERR15993673_5000_dnabert2_patterns.json -p dnabert2 -b 80 --overhead 101
+```
+
+Optional CUDA acceleration: when Docker can access an NVIDIA GPU, use this
+command instead:
+
+```powershell
+docker run --rm --gpus all -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns detect -f /data/runs/ERR15993673_5000.seq.txt -o /data/outputs/ERR15993673_5000_dnabert2_patterns.json -p dnabert2 -b 80 --overhead 101
 ```
 
 ### 9. Compress the sequences
@@ -190,6 +199,19 @@ the SHA-256 comparison above is the strict losslessness check.
 Local models download their weights the first time they run. DNABERT-2 and
 HyenaDNA retain their existing `trust_remote_code=True` behavior, so use the
 locked optional environment supplied by this repository.
+
+### CUDA acceleration
+
+The local `dnabert2` and `hyenadna` providers automatically use CUDA when the
+installed PyTorch build can see an NVIDIA GPU. They use CPU when CUDA is not
+available, including when a CUDA transfer fails. On Windows `AMD64` and Linux
+`x86_64`, the `local-models` extra installs the CUDA 12.1 PyTorch build; other
+platforms use the CPU build.
+
+For Docker, the optional CUDA command in step 8 requires `--gpus all` and an
+NVIDIA GPU accessible to Docker. Omit that flag when Docker cannot access a
+GPU; the provider then uses CPU. The detection log reports whether the model
+loaded on CUDA or CPU.
 
 ## Docker
 

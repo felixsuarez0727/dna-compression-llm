@@ -37,7 +37,7 @@ are isolated in uv extras:
 | Extra | Purpose |
 | --- | --- |
 | `llm` | OpenAI-compatible, DeepSeek, and Gemini hosted providers |
-| `local-models` | CPU PyTorch and Transformer dependencies for local models |
+| `local-models` | CUDA 12.1 PyTorch on supported Windows/Linux systems, CPU PyTorch elsewhere, and Transformer dependencies for local models |
 
 Heavy imports are lazy. A core installation can import the package and use
 offline commands without installing client or model libraries.
@@ -83,5 +83,8 @@ the Docker image sets it to `/data/logs` so logs persist in the mounted volume.
 - The detector estimates savings with `seq_len - 1`; overhead analysis uses
   `seq_len - 3` for its `<X>` token model. Resolving that discrepancy is a
   separate algorithmic change.
-- The project is CPU-only by default. CUDA support, linting, type checks, PyPI
-  publication, and automatic `.env` loading are intentionally out of scope.
+- Local models use CUDA when `torch.cuda.is_available()` and fall back to CPU
+  when CUDA is unavailable or model placement fails. Docker must receive
+  `--gpus all` before an NVIDIA GPU is visible to the container.
+- Linting, type checks, PyPI publication, and automatic `.env` loading are
+  intentionally out of scope.

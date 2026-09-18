@@ -6,6 +6,21 @@ import sys
 from collections import Counter, defaultdict
 
 
+def _place_model_on_available_device(model, torch, save_log, model_name):
+    if torch.cuda.is_available():
+        try:
+            model = model.to("cuda")
+        except (AssertionError, RuntimeError) as error:
+            save_log(f"  {model_name}: CUDA placement failed ({error}); falling back to CPU.")
+        else:
+            save_log(f"  {model_name} loaded on CUDA.")
+            return model, "cuda"
+
+    model = model.to("cpu")
+    save_log(f"  {model_name} loaded on CPU.")
+    return model, "cpu"
+
+
 def load_dnabert2(model_id, save_log):
     try:
         from transformers import AutoModel, AutoTokenizer
@@ -22,9 +37,9 @@ def load_dnabert2(model_id, save_log):
     model = AutoModel.from_pretrained(model_id, trust_remote_code=True)
     model.eval()
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = model.to(device)
-    save_log(f"  DNABERT-2 loaded on {device.upper()}.")
+    model, device = _place_model_on_available_device(
+        model, torch, save_log, "DNABERT-2"
+    )
 
     return {"tokenizer": tokenizer, "model": model, "device": device, "torch": torch}
 
@@ -202,9 +217,9 @@ def load_hyenadna(model_id, save_log):
     model = AutoModel.from_pretrained(model_id, trust_remote_code=True)
     model.eval()
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = model.to(device)
-    save_log(f"  HyenaDNA loaded on {device.upper()}.")
+    model, device = _place_model_on_available_device(
+        model, torch, save_log, "HyenaDNA"
+    )
 
     return {"tokenizer": tokenizer, "model": model, "device": device, "torch": torch}
 
