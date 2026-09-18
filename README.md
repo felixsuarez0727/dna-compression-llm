@@ -73,7 +73,9 @@ Use `uv run dna-compress <command> --help` for the full argument list.
 Watch the [pipeline demonstration](docs/demo/dna-compression-pipeline-demo.mp4)
 for an end-to-end run of the workflow below.
 
-## Typical Workflow
+## FASTQ Compression Pipeline
+
+![FASTQ Compression Pipeline](diagrams/pipeline_beautiful.png)
 
 This example processes a public FASTQ read through sequence extraction,
 pattern detection, lossless compression, restoration, and byte-level
@@ -146,13 +148,19 @@ docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns co
 docker run --rm -v "${PWD}\data:/data" --entrypoint dna-compress dna-patterns decompress -i /data/outputs/ERR15993673_5000_dnabert2.compress -p /data/outputs/ERR15993673_5000_dnabert2_patterns.json -o /data/outputs/ERR15993673_5000_dnabert2.restored
 ```
 
-### 11. Compare output sizes
+### 11. Compare normalized sequence content
+
+```powershell
+uv run dna-compress compare .\data\runs\ERR15993673_5000.seq.txt .\data\outputs\ERR15993673_5000_dnabert2.restored
+```
+
+### 12. Compare output sizes
 
 ```powershell
 Get-Item .\data\runs\ERR15993673_5000.seq.txt, .\data\outputs\ERR15993673_5000_dnabert2.compress, .\data\outputs\ERR15993673_5000_dnabert2.restored | Select-Object Name, Length
 ```
 
-### 12. Verify lossless restoration
+### 13. Verify lossless restoration
 
 ```powershell
 $originalHash = (Get-FileHash .\data\runs\ERR15993673_5000.seq.txt -Algorithm SHA256).Hash
