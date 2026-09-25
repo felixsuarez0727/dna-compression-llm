@@ -11,14 +11,15 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 MICRO_TOKEN_POOL = list("bdefhijklmoprsvwxyz")
 
 _LOG_FILE = None
+_LOG_DIR = "data/logs"
 
 
 def save_log(line):
     safe_line = line.replace("→", "->")
     print(safe_line)
     if _LOG_FILE:
-        os.makedirs("data/logs", exist_ok=True)
-        with open(f"data/logs/{_LOG_FILE}", "a", encoding="utf-8") as f:
+        os.makedirs(_LOG_DIR, exist_ok=True)
+        with open(f"{_LOG_DIR}/{_LOG_FILE}", "a", encoding="utf-8") as f:
             f.write(safe_line + "\n")
 
 PROVIDER_DEFAULTS = {
@@ -160,7 +161,31 @@ def parse_model_response(text):
     return patterns
 
 
-def analyze_batch_with_context(client, provider, model_id, sequences, batch_num, top_kmers):
+def is_retriable_error(error):
+    msg = str(error).lower()
+    retriable_markers = (
+        "503",
+        "unavailable",
+        "rate limit",
+        "429",
+        "timeout",
+        "timed out",
+        "connection reset",
+        "temporarily unavailable",
+    )
+    return any(marker in msg for marker in retriable_markers)
+
+
+def analyze_batch_with_context(
+    client,
+    provider,
+    model_id,
+    sequences,
+    batch_num,
+    top_kmers,
+    max_retries=3,
+    retry_base_delay=2.0,
+):
     sequences_block = "\n".join(sequences)
     kmer_context = format_kmers_for_prompt(top_kmers)
 
@@ -189,14 +214,31 @@ def analyze_batch_with_context(client, provider, model_id, sequences, batch_num,
         "Patterns:"
     )
 
-    try:
-        return call_llm(client, provider, model_id, "You are an expert bioinformatics AI.", user_prompt)
-    except Exception as e:
-        save_log(f"\n  Warning: Error in batch {batch_num}: {e}")
-        return None
+    for attempt in range(max_retries + 1):
+        try:
+            return call_llm(client, provider, model_id, "You are an expert bioinformatics AI.", user_prompt)
+        except Exception as e:
+            if attempt < max_retries and is_retriable_error(e):
+                delay = retry_base_delay * (2 ** attempt)
+                save_log(
+                    f"\n  Warning: Retriable error in batch {batch_num}: {e}. "
+                    f"Retrying in {delay:.1f}s ({attempt + 1}/{max_retries})"
+                )
+                time.sleep(delay)
+                continue
+            save_log(f"\n  Warning: Error in batch {batch_num}: {e}")
+            return None
 
 
-def analyze_batch_synthesis(client, provider, model_id, all_candidates, top_kmers):
+def analyze_batch_synthesis(
+    client,
+    provider,
+    model_id,
+    all_candidates,
+    top_kmers,
+    max_retries=3,
+    retry_base_delay=2.0,
+):
     candidates_block = "\n".join(
         f"{seq}: {count} times"
         for seq, count in sorted(all_candidates.items(), key=lambda x: -x[1])[:80]
@@ -222,11 +264,20 @@ def analyze_batch_synthesis(client, provider, model_id, all_candidates, top_kmer
         "Optimized pattern list:"
     )
 
-    try:
-        return call_llm(client, provider, model_id, "You are an expert DNA compression AI.", user_prompt)
-    except Exception as e:
-        save_log(f"\n  Warning: Error in synthesis pass: {e}")
-        return None
+    for attempt in range(max_retries + 1):
+        try:
+            return call_llm(client, provider, model_id, "You are an expert DNA compression AI.", user_prompt)
+        except Exception as e:
+            if attempt < max_retries and is_retriable_error(e):
+                delay = retry_base_delay * (2 ** attempt)
+                save_log(
+                    f"\n  Warning: Retriable error in synthesis pass: {e}. "
+                    f"Retrying in {delay:.1f}s ({attempt + 1}/{max_retries})"
+                )
+                time.sleep(delay)
+                continue
+            save_log(f"\n  Warning: Error in synthesis pass: {e}")
+            return None
 
 
 def token_length_pnn(idx):
@@ -289,6 +340,57 @@ def deduplicate_phase_variants(aggregated_patterns):
             save_log(f"    '{seq[:40]}' (unit canon='{canon}', count={count})")
         if len(removed) > 8:
             save_log(f"    ... and {len(removed) - 8} more")
+
+    return result
+
+
+def prune_shifted_redundant_patterns(
+    aggregated_patterns,
+    min_length=80,
+    max_length_gap=24,
+    count_tolerance=0.20,
+):
+    sorted_items = sorted(
+        aggregated_patterns.items(),
+        key=lambda x: (len(x[0]), x[1]),
+        reverse=True,
+    )
+
+    kept = []
+    pruned = []
+    result = {}
+
+    for seq, count in sorted_items:
+        should_prune = False
+
+        if len(seq) >= min_length:
+            for super_seq, super_count in kept:
+                if len(super_seq) <= len(seq):
+                    continue
+                if len(super_seq) - len(seq) > max_length_gap:
+                    continue
+                if seq not in super_seq:
+                    continue
+
+                max_count = max(super_count, count, 1)
+                rel_diff = abs(super_count - count) / max_count
+                if rel_diff <= count_tolerance:
+                    should_prune = True
+                    pruned.append((seq, count, super_seq[:40]))
+                    break
+
+        if should_prune:
+            continue
+
+        result[seq] = count
+        kept.append((seq, count))
+
+    if pruned:
+        save_log(f"  Pruned {len(pruned)} shifted redundant patterns:")
+        for seq, count, super_preview in pruned[:8]:
+            save_log(f"    '{seq[:40]}' (count={count}) shadowed by '{super_preview}...'")
+        if len(pruned) > 8:
+            save_log(f"    ... and {len(pruned) - 8} more")
 
     return result
 
@@ -421,10 +523,17 @@ def main():
     parser.add_argument("--batch_size", "-b", type=int, default=30, help="Sequences per API call")
     parser.add_argument("--model", "-m", default=None, help="Model ID (defaults to provider default)")
     parser.add_argument("--max_batches", type=int, default=0, help="Max number of LLM batches")
-    parser.add_argument("--threads", type=int, default=4, help="Parallel threads for batch analysis (chatgpt and deepseek only, default: 4)")
+    parser.add_argument("--threads", type=int, default=4, help="Parallel threads for batch analysis (default: 4)")
     parser.add_argument("--overhead", type=int, default=5, help="Dictionary entry cost in bytes for final optimization (default: 5)")
+    parser.add_argument("--max_retries", type=int, default=3, help="Retry attempts for transient API errors (default: 3)")
+    parser.add_argument("--retry_base_delay", type=float, default=2.0, help="Base delay in seconds for exponential backoff (default: 2.0)")
     parser.add_argument("--no_validate", action="store_true", help="Disable validation against real sequences")
     parser.add_argument("--no_expand", action="store_true", help="Disable tandem repeat expansion")
+    parser.add_argument("--no_shift_prune", action="store_true", help="Disable shifted redundancy pruning")
+    parser.add_argument("--shift_prune_min_len", type=int, default=80, help="Minimum pattern length to apply shifted pruning (default: 80)")
+    parser.add_argument("--shift_prune_max_gap", type=int, default=24, help="Max length gap between overlapping shifted patterns (default: 24)")
+    parser.add_argument("--shift_prune_count_tol", type=float, default=0.20, help="Relative count tolerance for shifted pruning (default: 0.20)")
+    parser.add_argument("--log-dir", default=None, help="Directory for detector logs (default: data/logs)")
 
     args = parser.parse_args()
 
@@ -432,7 +541,9 @@ def main():
     client = build_client(args.provider, args.key)
 
     ts = time.strftime("%Y%m%d_%H%M%S")
-    global _LOG_FILE
+    global _LOG_FILE, _LOG_DIR
+    if args.log_dir:
+        _LOG_DIR = args.log_dir
     _LOG_FILE = f"{Path(args.output).stem}_log_{ts}.txt"
 
     sep = "=" * 56
@@ -443,9 +554,9 @@ def main():
     save_log(f"  Model      : {model_id}")
     save_log(f"  Batch size : {args.batch_size}")
     save_log(f"  Overhead   : {args.overhead}")
-    if args.provider in ("chatgpt", "deepseek"):
+    if args.threads > 1:
         save_log(f"  Threads    : {args.threads}")
-    save_log(f"  Log file   : data/logs/{_LOG_FILE}")
+    save_log(f"  Log file   : {_LOG_DIR}/{_LOG_FILE}")
     save_log(f"  Output     : {args.output}")
     save_log(f"{sep}\n")
 
@@ -470,12 +581,21 @@ def main():
             break
         all_batches.append((len(all_batches) + 1, all_sequences[i:i + args.batch_size]))
 
-    if args.provider in ("chatgpt", "deepseek") and args.threads > 1:
+    if args.threads > 1:
         save_log(f"  Using {args.threads} parallel threads for {len(all_batches)} batches...")
 
         def run_batch(batch_num, batch):
             thread_client = build_client(args.provider, args.key)
-            raw = analyze_batch_with_context(thread_client, args.provider, model_id, batch, batch_num, top_kmers)
+            raw = analyze_batch_with_context(
+                thread_client,
+                args.provider,
+                model_id,
+                batch,
+                batch_num,
+                top_kmers,
+                args.max_retries,
+                args.retry_base_delay,
+            )
             return batch_num, raw
 
         with ThreadPoolExecutor(max_workers=args.threads) as executor:
@@ -494,7 +614,16 @@ def main():
     else:
         for batch_num, batch in all_batches:
             save_log(f"Batch #{batch_num} ({len(batch)} sequences)... ")
-            raw = analyze_batch_with_context(client, args.provider, model_id, batch, batch_num, top_kmers)
+            raw = analyze_batch_with_context(
+                client,
+                args.provider,
+                model_id,
+                batch,
+                batch_num,
+                top_kmers,
+                args.max_retries,
+                args.retry_base_delay,
+            )
             if raw:
                 parsed = parse_model_response(raw)
                 save_log(f"  -> {len(parsed)} patterns detected")
@@ -507,7 +636,15 @@ def main():
 
     if aggregated_patterns:
         save_log(f"\nGlobal synthesis pass ({len(aggregated_patterns)} candidates)...")
-        raw_syn = analyze_batch_synthesis(client, args.provider, model_id, aggregated_patterns, top_kmers)
+        raw_syn = analyze_batch_synthesis(
+            client,
+            args.provider,
+            model_id,
+            aggregated_patterns,
+            top_kmers,
+            args.max_retries,
+            args.retry_base_delay,
+        )
         if raw_syn:
             parsed_syn = parse_model_response(raw_syn)
             save_log(f"Synthesis contributed {len(parsed_syn)} patterns")
@@ -552,6 +689,17 @@ def main():
     aggregated_patterns = deduplicate_phase_variants(aggregated_patterns)
     save_log(f"{before} -> {len(aggregated_patterns)} patterns after deduplication")
 
+    if not args.no_shift_prune:
+        save_log("\nPruning shifted redundant patterns...")
+        before_shift = len(aggregated_patterns)
+        aggregated_patterns = prune_shifted_redundant_patterns(
+            aggregated_patterns,
+            min_length=args.shift_prune_min_len,
+            max_length_gap=args.shift_prune_max_gap,
+            count_tolerance=args.shift_prune_count_tol,
+        )
+        save_log(f"{before_shift} -> {len(aggregated_patterns)} patterns after shift pruning")
+
     compressor_ready = build_compressor_patterns(aggregated_patterns)
 
     save_log("\nOptimizing and assigning final tokens...")
@@ -562,7 +710,7 @@ def main():
     save_log("ANALYSIS COMPLETE")
     save_log(f"Final patterns: {len(final_patterns)}")
     save_log(f"Saved to: {args.output}")
-    save_log(f"Log saved to: data/logs/{_LOG_FILE}")
+    save_log(f"Log saved to: {_LOG_DIR}/{_LOG_FILE}")
     save_log(f"{sep}")
 
 
