@@ -1,0 +1,518 @@
+{
+    "!": {
+        "sequence": "TGGTGAAGAAGGACAGGGGTAGTAACTGACCTTTGTTTGACGGTAATCAATTAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 1,
+        "count": 1083,
+        "potential_savings": 212268
+    },
+    "#": {
+        "sequence": "GTGAAGAAGGATAGAGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGCGCAGGCGGAAGAATAAGTCTGATGTGAAAGCCCTCGGCTTAACCGAGGAACTGCATCGG",
+        "priority": 2,
+        "count": 269,
+        "potential_savings": 52186
+    },
+    "$": {
+        "sequence": "GTGAAGAAGGACAGGGGTAGTAACTGACCTTTGTTTGACGGTAATCAATTAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAA",
+        "priority": 3,
+        "count": 75,
+        "potential_savings": 14550
+    },
+    "%": {
+        "sequence": "GTGAAGAAGGATAGAGGTAGTAACTGACCTTTGTTTGACGGTAATCAATTAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 4,
+        "count": 4,
+        "potential_savings": 776
+    },
+    "&": {
+        "sequence": "GAAGAAGGATAGAGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGCGCAGGCGGATTGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGAAGAACTGCATCAG",
+        "priority": 5,
+        "count": 72,
+        "potential_savings": 13824
+    },
+    "'": {
+        "sequence": "CTGACCTTTGTTTGACGGTAATCAATTAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 6,
+        "count": 1095,
+        "potential_savings": 187245
+    },
+    "(": {
+        "sequence": "TTAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 7,
+        "count": 1118,
+        "potential_savings": 163228
+    },
+    ")": {
+        "sequence": "TACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGCGCAGGCGGAAGAATAAGTCTGATGTGAAAGCCCTCGGCTTAACCGAGGAACTGCATCGG",
+        "priority": 8,
+        "count": 353,
+        "potential_savings": 44831
+    },
+    "*": {
+        "sequence": "CCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 9,
+        "count": 1199,
+        "potential_savings": 145079
+    },
+    "+": {
+        "sequence": "GGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 10,
+        "count": 2,
+        "potential_savings": 232
+    },
+    ",": {
+        "sequence": "CAGCAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGGTTTCGGCTCGTAAAGCTCTGTTGTTGGTGAAGAAGG",
+        "priority": 11,
+        "count": 1750,
+        "potential_savings": 178500
+    },
+    "-": {
+        "sequence": "AAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTA",
+        "priority": 12,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    ".": {
+        "sequence": "AAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAA",
+        "priority": 13,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    "/": {
+        "sequence": "AGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAAT",
+        "priority": 14,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    "0": {
+        "sequence": "GCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATA",
+        "priority": 15,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    "1": {
+        "sequence": "CTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATAC",
+        "priority": 16,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    "2": {
+        "sequence": "TCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACG",
+        "priority": 17,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    "3": {
+        "sequence": "CTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGT",
+        "priority": 18,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    "4": {
+        "sequence": "TGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTA",
+        "priority": 19,
+        "count": 15,
+        "potential_savings": 1530
+    },
+    "5": {
+        "sequence": "TCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCG",
+        "priority": 20,
+        "count": 15,
+        "potential_savings": 1515
+    },
+    "6": {
+        "sequence": "CGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGC",
+        "priority": 21,
+        "count": 15,
+        "potential_savings": 1515
+    },
+    "7": {
+        "sequence": "GTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCG",
+        "priority": 22,
+        "count": 15,
+        "potential_savings": 1515
+    },
+    "8": {
+        "sequence": "TAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGG",
+        "priority": 23,
+        "count": 15,
+        "potential_savings": 1515
+    },
+    "9": {
+        "sequence": "TGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGG",
+        "priority": 24,
+        "count": 15,
+        "potential_savings": 1515
+    },
+    ":": {
+        "sequence": "GGCTCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAG",
+        "priority": 25,
+        "count": 14,
+        "potential_savings": 1414
+    },
+    ";": {
+        "sequence": "GCTCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGC",
+        "priority": 26,
+        "count": 14,
+        "potential_savings": 1414
+    },
+    "=": {
+        "sequence": "CTCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCC",
+        "priority": 27,
+        "count": 14,
+        "potential_savings": 1414
+    },
+    "?": {
+        "sequence": "CAGTAGGGAATCTTCCACAATGGACGCAAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGTTTTCGGATCGTAAAGCTCTGTTGTTGGTGAAGAAGG",
+        "priority": 28,
+        "count": 427,
+        "potential_savings": 42273
+    },
+    "@": {
+        "sequence": "CAGTAGGGAATCTTCCACAATGGACGAAAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGTTTTCGGATCGTAAAGCTCTGTTGTTGGTGAAGAAGG",
+        "priority": 29,
+        "count": 91,
+        "potential_savings": 9009
+    },
+    "B": {
+        "sequence": "GGCAAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 30,
+        "count": 1217,
+        "potential_savings": 116832
+    },
+    "D": {
+        "sequence": "GGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGG",
+        "priority": 31,
+        "count": 549,
+        "potential_savings": 44469
+    },
+    "E": {
+        "sequence": "TTATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 32,
+        "count": 1229,
+        "potential_savings": 95862
+    },
+    "F": {
+        "sequence": "TATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 33,
+        "count": 1229,
+        "potential_savings": 94633
+    },
+    "H": {
+        "sequence": "ATTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 34,
+        "count": 1230,
+        "potential_savings": 93480
+    },
+    "I": {
+        "sequence": "TTGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 35,
+        "count": 1233,
+        "potential_savings": 92475
+    },
+    "J": {
+        "sequence": "TGGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 36,
+        "count": 1233,
+        "potential_savings": 91242
+    },
+    "K": {
+        "sequence": "GGGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 37,
+        "count": 1233,
+        "potential_savings": 90009
+    },
+    "L": {
+        "sequence": "AAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGGTTTCGGCTCGTAAAGCTCTGTTGTTGGTGAAGAAGG",
+        "priority": 38,
+        "count": 1784,
+        "potential_savings": 128448
+    },
+    "M": {
+        "sequence": "GGCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 39,
+        "count": 1236,
+        "potential_savings": 88992
+    },
+    "N": {
+        "sequence": "CTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCT",
+        "priority": 40,
+        "count": 15,
+        "potential_savings": 1080
+    },
+    "O": {
+        "sequence": "TGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTA",
+        "priority": 41,
+        "count": 15,
+        "potential_savings": 1080
+    },
+    "P": {
+        "sequence": "AAGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGGTTTCGGCTCGTAAAGCTCTGTTGTTGGTGAAGAAG",
+        "priority": 42,
+        "count": 1784,
+        "potential_savings": 126664
+    },
+    "Q": {
+        "sequence": "GCGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 43,
+        "count": 1237,
+        "potential_savings": 87827
+    },
+    "R": {
+        "sequence": "GTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTA",
+        "priority": 44,
+        "count": 554,
+        "potential_savings": 39334
+    },
+    "S": {
+        "sequence": "AGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAAT",
+        "priority": 45,
+        "count": 553,
+        "potential_savings": 39263
+    },
+    "U": {
+        "sequence": "GTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATA",
+        "priority": 46,
+        "count": 553,
+        "potential_savings": 39263
+    },
+    "V": {
+        "sequence": "TAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATAC",
+        "priority": 47,
+        "count": 553,
+        "potential_savings": 39263
+    },
+    "W": {
+        "sequence": "AACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACG",
+        "priority": 48,
+        "count": 553,
+        "potential_savings": 39263
+    },
+    "X": {
+        "sequence": "TAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAA",
+        "priority": 49,
+        "count": 552,
+        "potential_savings": 39192
+    },
+    "Y": {
+        "sequence": "ACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGT",
+        "priority": 50,
+        "count": 552,
+        "potential_savings": 39192
+    },
+    "Z": {
+        "sequence": "CTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTA",
+        "priority": 51,
+        "count": 552,
+        "potential_savings": 39192
+    },
+    "[": {
+        "sequence": "GCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCAC",
+        "priority": 52,
+        "count": 15,
+        "potential_savings": 1065
+    },
+    "]": {
+        "sequence": "CTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACG",
+        "priority": 53,
+        "count": 15,
+        "potential_savings": 1065
+    },
+    "^": {
+        "sequence": "TCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGG",
+        "priority": 54,
+        "count": 15,
+        "potential_savings": 1065
+    },
+    "_": {
+        "sequence": "AGTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGGTTTCGGCTCGTAAAGCTCTGTTGTTGGTGAAGAAG",
+        "priority": 55,
+        "count": 1784,
+        "potential_savings": 124880
+    },
+    "`": {
+        "sequence": "GTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGGTTTCGGCTCGTAAAGCTCTGTTGTTGGTGAAGAAGG",
+        "priority": 56,
+        "count": 1784,
+        "potential_savings": 124880
+    },
+    "a": {
+        "sequence": "CGTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 57,
+        "count": 1239,
+        "potential_savings": 86730
+    },
+    "b": {
+        "sequence": "GGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGG",
+        "priority": 58,
+        "count": 554,
+        "potential_savings": 38780
+    },
+    "c": {
+        "sequence": "TCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAG",
+        "priority": 59,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "d": {
+        "sequence": "CGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGA",
+        "priority": 60,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "e": {
+        "sequence": "GTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAA",
+        "priority": 61,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "f": {
+        "sequence": "TAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAA",
+        "priority": 62,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "g": {
+        "sequence": "AAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAG",
+        "priority": 63,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "h": {
+        "sequence": "AAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGT",
+        "priority": 64,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "i": {
+        "sequence": "AGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTC",
+        "priority": 65,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "j": {
+        "sequence": "TGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAA",
+        "priority": 66,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "k": {
+        "sequence": "AAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAG",
+        "priority": 67,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "l": {
+        "sequence": "AGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGC",
+        "priority": 68,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "m": {
+        "sequence": "GGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCA",
+        "priority": 69,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "n": {
+        "sequence": "GACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAG",
+        "priority": 70,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "o": {
+        "sequence": "ACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGC",
+        "priority": 71,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "p": {
+        "sequence": "CAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCC",
+        "priority": 72,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "q": {
+        "sequence": "AGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCG",
+        "priority": 73,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "r": {
+        "sequence": "GGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGC",
+        "priority": 74,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "s": {
+        "sequence": "GGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCG",
+        "priority": 75,
+        "count": 15,
+        "potential_savings": 1050
+    },
+    "t": {
+        "sequence": "GGCTCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAAC",
+        "priority": 76,
+        "count": 14,
+        "potential_savings": 980
+    },
+    "u": {
+        "sequence": "GCTCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACC",
+        "priority": 77,
+        "count": 14,
+        "potential_savings": 980
+    },
+    "v": {
+        "sequence": "CTCGTAAAGCTCTGTTGTTGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCA",
+        "priority": 78,
+        "count": 14,
+        "potential_savings": 980
+    },
+    "w": {
+        "sequence": "GTCTGATGGAGCAACGCCGCGTGAGTGAAGAAGGGTTTCGGCTCGTAAAGCTCTGTTGTTGGTGAAGAAG",
+        "priority": 79,
+        "count": 1784,
+        "potential_savings": 123096
+    },
+    "x": {
+        "sequence": "GTAAAGCGAGTGCAGGCGGCTCGATAAGTCTGATGTGAAAGCCTTCGGCTCAACCGGAGAATTGCATCAG",
+        "priority": 80,
+        "count": 1239,
+        "potential_savings": 85491
+    },
+    "y": {
+        "sequence": "TGGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACT",
+        "priority": 81,
+        "count": 15,
+        "potential_savings": 1035
+    },
+    "z": {
+        "sequence": "GGTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTA",
+        "priority": 82,
+        "count": 15,
+        "potential_savings": 1035
+    },
+    "{": {
+        "sequence": "GTGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTAC",
+        "priority": 83,
+        "count": 15,
+        "potential_savings": 1035
+    },
+    "|": {
+        "sequence": "TGAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACG",
+        "priority": 84,
+        "count": 15,
+        "potential_savings": 1035
+    },
+    "}": {
+        "sequence": "GAAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGT",
+        "priority": 85,
+        "count": 15,
+        "potential_savings": 1035
+    },
+    "~": {
+        "sequence": "AAGAAGGACAGGGGTAGTAACTGGCCTTTATTTGACGGTAATCAACCAGAAAGTCACGGCTAACTACGTG",
+        "priority": 86,
+        "count": 15,
+        "potential_savings": 1035
+    }
+}

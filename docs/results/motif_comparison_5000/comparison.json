@@ -1,0 +1,101 @@
+[
+  {
+    "tool": "jellyfish",
+    "patterns": 86,
+    "mean_length": 12.0,
+    "coverage_pct": 11.888902919654665,
+    "ratio_pct": 8.887144532103896,
+    "compressed_kb": 1343.2294921875,
+    "dictionary_kb": 11.4150390625,
+    "seconds": 7.101184129714966,
+    "lossless": true
+  },
+  {
+    "tool": "trf",
+    "patterns": 21,
+    "mean_length": 7.9523809523809526,
+    "coverage_pct": 12.95627496460924,
+    "ratio_pct": -3.0206076985751507,
+    "compressed_kb": 1518.779296875,
+    "dictionary_kb": 2.6630859375,
+    "seconds": 1.5297961235046387,
+    "lossless": true
+  },
+  {
+    "tool": "mreps",
+    "patterns": 7,
+    "mean_length": 5.0,
+    "coverage_pct": 11.138485873603477,
+    "ratio_pct": -3.6563926260076984,
+    "compressed_kb": 1528.15234375,
+    "dictionary_kb": 0.8671875,
+    "seconds": 1.1065170764923096,
+    "lossless": true
+  },
+  {
+    "tool": "streme",
+    "patterns": 21,
+    "mean_length": 12.380952380952381,
+    "coverage_pct": 25.95734499511508,
+    "ratio_pct": 19.07460768532687,
+    "compressed_kb": 1193.041015625,
+    "dictionary_kb": 2.7734375,
+    "seconds": 274.31382989883423,
+    "lossless": true
+  },
+  {
+    "tool": "homer",
+    "patterns": 11,
+    "mean_length": 6.0,
+    "coverage_pct": 20.123485508065105,
+    "ratio_pct": 10.028417559269487,
+    "compressed_kb": 1326.404296875,
+    "dictionary_kb": 1.388671875,
+    "seconds": 6.117157936096191,
+    "lossless": true
+  },
+  {
+    "tool": "gemini_d5",
+    "patterns": 86,
+    "mean_length": 89.93023255813954,
+    "coverage_pct": 28.114818925583034,
+    "ratio_pct": 27.476997674926974,
+    "compressed_kb": 1069.1689453125,
+    "dictionary_kb": 17.80078125,
+    "seconds": 0.0,
+    "lossless": true
+  },
+  {
+    "tool": "gemini_d101",
+    "patterns": 86,
+    "mean_length": 67.82558139534883,
+    "coverage_pct": 36.91771398948579,
+    "ratio_pct": 35.718354828666634,
+    "compressed_kb": 947.6708984375,
+    "dictionary_kb": 16.0927734375,
+    "seconds": 0.0,
+    "lossless": true
+  },
+  {
+    "tool": "gpt_d5",
+    "patterns": 86,
+    "mean_length": 31.313953488372093,
+    "coverage_pct": 36.94323521397287,
+    "ratio_pct": 34.574697111212686,
+    "compressed_kb": 964.53125,
+    "dictionary_kb": 12.9951171875,
+    "seconds": 0.0,
+    "lossless": true
+  },
+  {
+    "tool": "deepseek_d5",
+    "patterns": 86,
+    "mean_length": 20.232558139534884,
+    "coverage_pct": 36.15088094747546,
+    "ratio_pct": 33.44991819187483,
+    "compressed_kb": 981.11328125,
+    "dictionary_kb": 12.0732421875,
+    "seconds": 0.0,
+    "lossless": true
+  }
+]

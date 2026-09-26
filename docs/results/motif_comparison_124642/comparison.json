@@ -1,0 +1,90 @@
+[
+  {
+    "tool": "jellyfish",
+    "patterns": 86,
+    "mean_length": 12.0,
+    "coverage_pct": 31.447409218255338,
+    "ratio_pct": 23.5074553706187,
+    "compressed_kb": 28117.0712890625,
+    "dictionary_kb": 11.7509765625,
+    "seconds": 80.52969717979431,
+    "lossless": true
+  },
+  {
+    "tool": "trf",
+    "patterns": 40,
+    "mean_length": 6.925,
+    "coverage_pct": 31.276322473031925,
+    "ratio_pct": -10.894733209362762,
+    "compressed_kb": 40762.6015625,
+    "dictionary_kb": 5.0400390625,
+    "seconds": 15.043744087219238,
+    "lossless": true
+  },
+  {
+    "tool": "mreps",
+    "patterns": 28,
+    "mean_length": 9.142857142857142,
+    "coverage_pct": 25.39388015696564,
+    "ratio_pct": -6.540957872763076,
+    "compressed_kb": 39162.244140625,
+    "dictionary_kb": 3.591796875,
+    "seconds": 27.553434133529663,
+    "lossless": true
+  },
+  {
+    "tool": "homer",
+    "patterns": 12,
+    "mean_length": 6.5,
+    "coverage_pct": 31.80458985028897,
+    "ratio_pct": 15.85029737157544,
+    "compressed_kb": 30931.68359375,
+    "dictionary_kb": 1.5498046875,
+    "seconds": 146.3728551864624,
+    "lossless": true
+  },
+  {
+    "tool": "gemini_d5",
+    "patterns": 86,
+    "mean_length": 185.24418604651163,
+    "coverage_pct": 46.7570793191673,
+    "ratio_pct": 45.890865261460156,
+    "compressed_kb": 19889.39453125,
+    "dictionary_kb": 25.775390625,
+    "seconds": 0.0,
+    "lossless": true
+  },
+  {
+    "tool": "gpt_d5",
+    "patterns": 86,
+    "mean_length": 41.46511627906977,
+    "coverage_pct": 51.55804783690313,
+    "ratio_pct": 49.74765219892798,
+    "compressed_kb": 18471.7197265625,
+    "dictionary_kb": 14.0478515625,
+    "seconds": 0.0,
+    "lossless": true
+  },
+  {
+    "tool": "deepseek_d5",
+    "patterns": 86,
+    "mean_length": 141.7093023255814,
+    "coverage_pct": 58.49133658774172,
+    "ratio_pct": 57.343237589556715,
+    "compressed_kb": 15679.740234375,
+    "dictionary_kb": 22.283203125,
+    "seconds": 0.0,
+    "lossless": true
+  },
+  {
+    "tool": "deepseek_d101",
+    "patterns": 86,
+    "mean_length": 137.8139534883721,
+    "coverage_pct": 59.39403881150689,
+    "ratio_pct": 58.236295458616304,
+    "compressed_kb": 15351.470703125,
+    "dictionary_kb": 21.9677734375,
+    "seconds": 0.0,
+    "lossless": true
+  }
+]

@@ -1,0 +1,170 @@
+{
+    "!": {
+        "sequence": "TGTTGTTGGTGAAGAAGGACAGGAGTAGTA",
+        "priority": 1,
+        "count": 9,
+        "potential_savings": 261
+    },
+    "#": {
+        "sequence": "GTGGTTTGTCGCGTCGTTTGT",
+        "priority": 2,
+        "count": 13,
+        "potential_savings": 260
+    },
+    "$": {
+        "sequence": "TGTTGTTGATGAAGAAGGA",
+        "priority": 3,
+        "count": 23,
+        "potential_savings": 414
+    },
+    "%": {
+        "sequence": "GACGCAGCGACGCCGCG",
+        "priority": 4,
+        "count": 37,
+        "potential_savings": 592
+    },
+    "&": {
+        "sequence": "AAAAAAAAAAAA",
+        "priority": 5,
+        "count": 30,
+        "potential_savings": 330
+    },
+    "'": {
+        "sequence": "TTTTTTTTTTTT",
+        "priority": 6,
+        "count": 15,
+        "potential_savings": 165
+    },
+    "(": {
+        "sequence": "AAAAAAAAAAA",
+        "priority": 7,
+        "count": 45,
+        "potential_savings": 450
+    },
+    ")": {
+        "sequence": "TTTTTTTTTTT",
+        "priority": 8,
+        "count": 25,
+        "potential_savings": 250
+    },
+    "*": {
+        "sequence": "AAAAAAAAAA",
+        "priority": 9,
+        "count": 63,
+        "potential_savings": 567
+    },
+    "+": {
+        "sequence": "TTTTTTTTTT",
+        "priority": 10,
+        "count": 40,
+        "potential_savings": 360
+    },
+    ",": {
+        "sequence": "TTGTTGTTG",
+        "priority": 11,
+        "count": 234,
+        "potential_savings": 1872
+    },
+    "-": {
+        "sequence": "TTTTTTTTT",
+        "priority": 12,
+        "count": 85,
+        "potential_savings": 680
+    },
+    ".": {
+        "sequence": "AAAAAAAAA",
+        "priority": 13,
+        "count": 83,
+        "potential_savings": 664
+    },
+    "/": {
+        "sequence": "TTTTTTTT",
+        "priority": 14,
+        "count": 273,
+        "potential_savings": 1911
+    },
+    "0": {
+        "sequence": "AAAAAAAA",
+        "priority": 15,
+        "count": 105,
+        "potential_savings": 735
+    },
+    "1": {
+        "sequence": "TTTTTTT",
+        "priority": 16,
+        "count": 1173,
+        "potential_savings": 7038
+    },
+    "2": {
+        "sequence": "AAAAAAA",
+        "priority": 17,
+        "count": 133,
+        "potential_savings": 798
+    },
+    "3": {
+        "sequence": "TTGTTG",
+        "priority": 18,
+        "count": 122030,
+        "potential_savings": 610150
+    },
+    "4": {
+        "sequence": "TTTTTT",
+        "priority": 19,
+        "count": 3016,
+        "potential_savings": 15080
+    },
+    "5": {
+        "sequence": "AAAAAA",
+        "priority": 20,
+        "count": 176,
+        "potential_savings": 880
+    },
+    "6": {
+        "sequence": "TTTTT",
+        "priority": 21,
+        "count": 5898,
+        "potential_savings": 23592
+    },
+    "7": {
+        "sequence": "AAAAA",
+        "priority": 22,
+        "count": 505,
+        "potential_savings": 2020
+    },
+    "8": {
+        "sequence": "TTTT",
+        "priority": 23,
+        "count": 39721,
+        "potential_savings": 119163
+    },
+    "9": {
+        "sequence": "AAAA",
+        "priority": 24,
+        "count": 2347,
+        "potential_savings": 7041
+    },
+    ":": {
+        "sequence": "TTT",
+        "priority": 25,
+        "count": 538983,
+        "potential_savings": 1077966
+    },
+    ";": {
+        "sequence": "AAA",
+        "priority": 26,
+        "count": 506515,
+        "potential_savings": 1013030
+    },
+    "=": {
+        "sequence": "AA",
+        "priority": 27,
+        "count": 3176607,
+        "potential_savings": 3176607
+    },
+    "?": {
+        "sequence": "TT",
+        "priority": 28,
+        "count": 1987052,
+        "potential_savings": 1987052
+    }
+}

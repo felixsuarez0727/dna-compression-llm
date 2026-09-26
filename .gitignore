@@ -29,3 +29,7 @@ fastq_files/*.fastq.gz
 
 # Temporary presentation artifacts
 presentation_workspace/
+
+# Large intermediate files from motif comparison runs
+docs/results/**/*.seq.compress
+docs/results/**/*.seq.restored

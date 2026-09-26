@@ -1,0 +1,44 @@
+{
+    "!": {
+        "sequence": "CTGCTGCTG",
+        "priority": 1,
+        "count": 84,
+        "potential_savings": 672
+    },
+    "#": {
+        "sequence": "CTGCTG",
+        "priority": 2,
+        "count": 1358,
+        "potential_savings": 6790
+    },
+    "$": {
+        "sequence": "AAAAAA",
+        "priority": 3,
+        "count": 35,
+        "potential_savings": 175
+    },
+    "%": {
+        "sequence": "AAAAA",
+        "priority": 4,
+        "count": 477,
+        "potential_savings": 1908
+    },
+    "&": {
+        "sequence": "AAAA",
+        "priority": 5,
+        "count": 1046,
+        "potential_savings": 3138
+    },
+    "'": {
+        "sequence": "AAA",
+        "priority": 6,
+        "count": 13740,
+        "potential_savings": 27480
+    },
+    "(": {
+        "sequence": "AA",
+        "priority": 7,
+        "count": 86726,
+        "potential_savings": 86726
+    }
+}

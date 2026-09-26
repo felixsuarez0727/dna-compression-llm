@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centering
+\caption{Motif tools vs.\ LLM dictionaries ($N=5000$, $\delta=101$)}
+\label{tab:motif_tools}
+\small
+\setlength{\tabcolsep}{3pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Tool} & \textbf{Patterns} & \textbf{Mean $L$ (bp)} & \textbf{Coverage (\%)} & \textbf{Ratio $R$ (\%)} & \textbf{Time (s)} & \textbf{Lossless} \\
+\midrule
+jellyfish & 86 & 12.0 & 11.89 & 8.89 & 7.1 & \checkmark \\
+trf & 21 & 8.0 & 12.96 & -3.02 & 1.5 & \checkmark \\
+mreps & 7 & 5.0 & 11.14 & -3.66 & 1.1 & \checkmark \\
+streme & 21 & 12.4 & 25.96 & 19.07 & 274.3 & \checkmark \\
+homer & 11 & 6.0 & 20.12 & 10.03 & 6.1 & \checkmark \\
+gemini_d5 & 86 & 89.9 & 28.11 & 27.48 & 0.0 & \checkmark \\
+gemini_d101 & 86 & 67.8 & 36.92 & 35.72 & 0.0 & \checkmark \\
+gpt_d5 & 86 & 31.3 & 36.94 & 34.57 & 0.0 & \checkmark \\
+deepseek_d5 & 86 & 20.2 & 36.15 & 33.45 & 0.0 & \checkmark \\
+\bottomrule
+\end{tabular}}
+\end{table}

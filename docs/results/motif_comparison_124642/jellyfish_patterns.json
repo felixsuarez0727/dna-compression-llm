@@ -1,0 +1,518 @@
+{
+    "!": {
+        "sequence": "CAGTAGGGAATC",
+        "priority": 1,
+        "count": 122863,
+        "potential_savings": 1351493
+    },
+    "#": {
+        "sequence": "AGTAGGGAATCT",
+        "priority": 2,
+        "count": 122847,
+        "potential_savings": 1351317
+    },
+    "$": {
+        "sequence": "GTAGGGAATCTT",
+        "priority": 3,
+        "count": 122788,
+        "potential_savings": 1350668
+    },
+    "%": {
+        "sequence": "AGCAGTAGGGAA",
+        "priority": 4,
+        "count": 122766,
+        "potential_savings": 1350426
+    },
+    "&": {
+        "sequence": "GCAGTAGGGAAT",
+        "priority": 5,
+        "count": 122765,
+        "potential_savings": 1350415
+    },
+    "'": {
+        "sequence": "CAGCAGTAGGGA",
+        "priority": 6,
+        "count": 122746,
+        "potential_savings": 1350206
+    },
+    "(": {
+        "sequence": "TAGGGAATCTTC",
+        "priority": 7,
+        "count": 122667,
+        "potential_savings": 1349337
+    },
+    ")": {
+        "sequence": "CTGATGGAGCAA",
+        "priority": 8,
+        "count": 122572,
+        "potential_savings": 1348292
+    },
+    "*": {
+        "sequence": "TGATGGAGCAAC",
+        "priority": 9,
+        "count": 122558,
+        "potential_savings": 1348138
+    },
+    "+": {
+        "sequence": "CCAGCAGCCGCG",
+        "priority": 10,
+        "count": 122535,
+        "potential_savings": 1347885
+    },
+    ",": {
+        "sequence": "GCCAGCAGCCGC",
+        "priority": 11,
+        "count": 122533,
+        "potential_savings": 1347863
+    },
+    "-": {
+        "sequence": "TGCCAGCAGCCG",
+        "priority": 12,
+        "count": 122482,
+        "potential_savings": 1347302
+    },
+    ".": {
+        "sequence": "GAGTGAAGAAGG",
+        "priority": 13,
+        "count": 122377,
+        "potential_savings": 1346147
+    },
+    "/": {
+        "sequence": "GCAGCAGTAGGG",
+        "priority": 14,
+        "count": 122352,
+        "potential_savings": 1345872
+    },
+    "0": {
+        "sequence": "AGGGAATCTTCC",
+        "priority": 15,
+        "count": 122335,
+        "potential_savings": 1345685
+    },
+    "1": {
+        "sequence": "CCGCGTGAGTGA",
+        "priority": 16,
+        "count": 122331,
+        "potential_savings": 1345641
+    },
+    "2": {
+        "sequence": "TGAGTGAAGAAG",
+        "priority": 17,
+        "count": 122305,
+        "potential_savings": 1345355
+    },
+    "3": {
+        "sequence": "CGTGAGTGAAGA",
+        "priority": 18,
+        "count": 122305,
+        "potential_savings": 1345355
+    },
+    "4": {
+        "sequence": "ATCTTCCACAAT",
+        "priority": 19,
+        "count": 122291,
+        "potential_savings": 1345201
+    },
+    "5": {
+        "sequence": "GCGTGAGTGAAG",
+        "priority": 20,
+        "count": 122289,
+        "potential_savings": 1345179
+    },
+    "6": {
+        "sequence": "AATCTTCCACAA",
+        "priority": 21,
+        "count": 122288,
+        "potential_savings": 1345168
+    },
+    "7": {
+        "sequence": "GTGAGTGAAGAA",
+        "priority": 22,
+        "count": 122287,
+        "potential_savings": 1345157
+    },
+    "8": {
+        "sequence": "CAGCAGCCGCGG",
+        "priority": 23,
+        "count": 122264,
+        "potential_savings": 1344904
+    },
+    "9": {
+        "sequence": "AGCAACGCCGCG",
+        "priority": 24,
+        "count": 122263,
+        "potential_savings": 1344893
+    },
+    ":": {
+        "sequence": "GGAATCTTCCAC",
+        "priority": 25,
+        "count": 122244,
+        "potential_savings": 1344684
+    },
+    ";": {
+        "sequence": "CGTGCCAGCAGC",
+        "priority": 26,
+        "count": 122230,
+        "potential_savings": 1344530
+    },
+    "=": {
+        "sequence": "GAATCTTCCACA",
+        "priority": 27,
+        "count": 122229,
+        "potential_savings": 1344519
+    },
+    "?": {
+        "sequence": "TCTTCCACAATG",
+        "priority": 28,
+        "count": 122224,
+        "potential_savings": 1344464
+    },
+    "@": {
+        "sequence": "GTGCCAGCAGCC",
+        "priority": 29,
+        "count": 122212,
+        "potential_savings": 1344332
+    },
+    "B": {
+        "sequence": "CGCGTGAGTGAA",
+        "priority": 30,
+        "count": 122212,
+        "potential_savings": 1344332
+    },
+    "D": {
+        "sequence": "GGGAATCTTCCA",
+        "priority": 31,
+        "count": 122211,
+        "potential_savings": 1344321
+    },
+    "E": {
+        "sequence": "CGGCTAACTACG",
+        "priority": 32,
+        "count": 122196,
+        "potential_savings": 1344156
+    },
+    "F": {
+        "sequence": "CAACGCCGCGTG",
+        "priority": 33,
+        "count": 122184,
+        "potential_savings": 1344024
+    },
+    "H": {
+        "sequence": "GCAACGCCGCGT",
+        "priority": 34,
+        "count": 122180,
+        "potential_savings": 1343980
+    },
+    "I": {
+        "sequence": "TACGTGCCAGCA",
+        "priority": 35,
+        "count": 122175,
+        "potential_savings": 1343925
+    },
+    "J": {
+        "sequence": "GGCTAACTACGT",
+        "priority": 36,
+        "count": 122170,
+        "potential_savings": 1343870
+    },
+    "K": {
+        "sequence": "GAGCAACGCCGC",
+        "priority": 37,
+        "count": 122158,
+        "potential_savings": 1343738
+    },
+    "L": {
+        "sequence": "CTTCCACAATGG",
+        "priority": 38,
+        "count": 122155,
+        "potential_savings": 1343705
+    },
+    "M": {
+        "sequence": "CTACGTGCCAGC",
+        "priority": 39,
+        "count": 122149,
+        "potential_savings": 1343639
+    },
+    "N": {
+        "sequence": "CTAACTACGTGC",
+        "priority": 40,
+        "count": 122123,
+        "potential_savings": 1343353
+    },
+    "O": {
+        "sequence": "ACGTGCCAGCAG",
+        "priority": 41,
+        "count": 122116,
+        "potential_savings": 1343276
+    },
+    "P": {
+        "sequence": "ACTACGTGCCAG",
+        "priority": 42,
+        "count": 122110,
+        "potential_savings": 1343210
+    },
+    "Q": {
+        "sequence": "GCTAACTACGTG",
+        "priority": 43,
+        "count": 122101,
+        "potential_savings": 1343111
+    },
+    "R": {
+        "sequence": "GCCGCGGTAATA",
+        "priority": 44,
+        "count": 122083,
+        "potential_savings": 1342913
+    },
+    "S": {
+        "sequence": "GGAGCAACGCCG",
+        "priority": 45,
+        "count": 122081,
+        "potential_savings": 1342891
+    },
+    "U": {
+        "sequence": "ATGGAGCAACGC",
+        "priority": 46,
+        "count": 122071,
+        "potential_savings": 1342781
+    },
+    "V": {
+        "sequence": "AACTACGTGCCA",
+        "priority": 47,
+        "count": 122064,
+        "potential_savings": 1342704
+    },
+    "W": {
+        "sequence": "CCGCGGTAATAC",
+        "priority": 48,
+        "count": 122059,
+        "potential_savings": 1342649
+    },
+    "X": {
+        "sequence": "AGCAGCCGCGGT",
+        "priority": 49,
+        "count": 122059,
+        "potential_savings": 1342649
+    },
+    "Y": {
+        "sequence": "ACGCCGCGTGAG",
+        "priority": 50,
+        "count": 122059,
+        "potential_savings": 1342649
+    },
+    "Z": {
+        "sequence": "TAACTACGTGCC",
+        "priority": 51,
+        "count": 122047,
+        "potential_savings": 1342517
+    },
+    "[": {
+        "sequence": "AACGCCGCGTGA",
+        "priority": 52,
+        "count": 122028,
+        "potential_savings": 1342308
+    },
+    "]": {
+        "sequence": "GATGGAGCAACG",
+        "priority": 53,
+        "count": 122021,
+        "potential_savings": 1342231
+    },
+    "^": {
+        "sequence": "TGGAGCAACGCC",
+        "priority": 54,
+        "count": 122020,
+        "potential_savings": 1342220
+    },
+    "_": {
+        "sequence": "GCAGCCGCGGTA",
+        "priority": 55,
+        "count": 122013,
+        "potential_savings": 1342143
+    },
+    "`": {
+        "sequence": "CAGCCGCGGTAA",
+        "priority": 56,
+        "count": 121980,
+        "potential_savings": 1341780
+    },
+    "a": {
+        "sequence": "AGCCGCGGTAAT",
+        "priority": 57,
+        "count": 121980,
+        "potential_savings": 1341780
+    },
+    "b": {
+        "sequence": "GGAGGCAGCAGT",
+        "priority": 58,
+        "count": 121975,
+        "potential_savings": 1341725
+    },
+    "c": {
+        "sequence": "CGCGGTAATACG",
+        "priority": 59,
+        "count": 121939,
+        "potential_savings": 1341329
+    },
+    "d": {
+        "sequence": "GTCTGATGGAGC",
+        "priority": 60,
+        "count": 121931,
+        "potential_savings": 1341241
+    },
+    "e": {
+        "sequence": "AGTCTGATGGAG",
+        "priority": 61,
+        "count": 121928,
+        "potential_savings": 1341208
+    },
+    "f": {
+        "sequence": "TCTGATGGAGCA",
+        "priority": 62,
+        "count": 121907,
+        "potential_savings": 1340977
+    },
+    "g": {
+        "sequence": "AGGCAGCAGTAG",
+        "priority": 63,
+        "count": 121901,
+        "potential_savings": 1340911
+    },
+    "h": {
+        "sequence": "GGCAGCAGTAGG",
+        "priority": 64,
+        "count": 121889,
+        "potential_savings": 1340779
+    },
+    "i": {
+        "sequence": "CGCCGCGTGAGT",
+        "priority": 65,
+        "count": 121862,
+        "potential_savings": 1340482
+    },
+    "j": {
+        "sequence": "GCCGCGTGAGTG",
+        "priority": 66,
+        "count": 121855,
+        "potential_savings": 1340405
+    },
+    "k": {
+        "sequence": "AAGTCTGATGGA",
+        "priority": 67,
+        "count": 121848,
+        "potential_savings": 1340328
+    },
+    "l": {
+        "sequence": "ACGGCTAACTAC",
+        "priority": 68,
+        "count": 121836,
+        "potential_savings": 1340196
+    },
+    "m": {
+        "sequence": "GAGGCAGCAGTA",
+        "priority": 69,
+        "count": 121719,
+        "potential_savings": 1338909
+    },
+    "n": {
+        "sequence": "CACGGCTAACTA",
+        "priority": 70,
+        "count": 121672,
+        "potential_savings": 1338392
+    },
+    "o": {
+        "sequence": "CGTAAAGCTCTG",
+        "priority": 71,
+        "count": 121661,
+        "potential_savings": 1338271
+    },
+    "p": {
+        "sequence": "TTCCACAATGGA",
+        "priority": 72,
+        "count": 121656,
+        "potential_savings": 1338216
+    },
+    "q": {
+        "sequence": "CGGTAATACGTA",
+        "priority": 73,
+        "count": 121642,
+        "potential_savings": 1338062
+    },
+    "r": {
+        "sequence": "AAGTCACGGCTA",
+        "priority": 74,
+        "count": 121639,
+        "potential_savings": 1338029
+    },
+    "s": {
+        "sequence": "TCGTAAAGCTCT",
+        "priority": 75,
+        "count": 121632,
+        "potential_savings": 1337952
+    },
+    "t": {
+        "sequence": "GCGGTAATACGT",
+        "priority": 76,
+        "count": 121583,
+        "potential_savings": 1337413
+    },
+    "u": {
+        "sequence": "AAAGTCACGGCT",
+        "priority": 77,
+        "count": 121573,
+        "potential_savings": 1337303
+    },
+    "v": {
+        "sequence": "AGTCACGGCTAA",
+        "priority": 78,
+        "count": 121566,
+        "potential_savings": 1337226
+    },
+    "w": {
+        "sequence": "TCACGGCTAACT",
+        "priority": 79,
+        "count": 121541,
+        "potential_savings": 1336951
+    },
+    "x": {
+        "sequence": "TCCACAATGGAC",
+        "priority": 80,
+        "count": 121533,
+        "potential_savings": 1336863
+    },
+    "y": {
+        "sequence": "CCACAATGGACG",
+        "priority": 81,
+        "count": 121526,
+        "potential_savings": 1336786
+    },
+    "z": {
+        "sequence": "GTAAAGCTCTGT",
+        "priority": 82,
+        "count": 121515,
+        "potential_savings": 1336665
+    },
+    "{": {
+        "sequence": "GTCACGGCTAAC",
+        "priority": 83,
+        "count": 121514,
+        "potential_savings": 1336654
+    },
+    "|": {
+        "sequence": "GAAAGTCACGGC",
+        "priority": 84,
+        "count": 121384,
+        "potential_savings": 1335224
+    },
+    "}": {
+        "sequence": "GGGAGGCAGCAG",
+        "priority": 85,
+        "count": 121381,
+        "potential_savings": 1335191
+    },
+    "~": {
+        "sequence": "GTAATACGTAGG",
+        "priority": 86,
+        "count": 121378,
+        "potential_savings": 1335158
+    }
+}

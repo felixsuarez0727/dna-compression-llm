@@ -251,3 +251,18 @@ known scope boundaries.
   token-cost assumptions.
 - The bundled test data is from `ERR15993673`, a raw metagenomic sequencing
   data set from a human vaginal sample in the NCBI Trace Archive.
+
+---
+
+## Comparing with other motif tools
+
+`dna-compress compare-motifs` runs Jellyfish (k-mer counting), Tandem Repeats Finder, mreps, STREME (MEME Suite) and HOMER on the same sequence file. Each tool's motifs go through the same validation, phase deduplication, token limit and overhead filter as the LLM pipeline, and through the same compressor and integrity check, so ratio, coverage, dictionary size and runtime are comparable. Existing LLM dictionaries can be added to the table.
+
+```
+micromamba create -n motifs -c conda-forge -c bioconda --platform osx-64 trf mreps meme homer
+brew install jellyfish
+export MOTIF_TOOLS_BIN=$HOME/mamba/envs/motifs/bin
+dna-compress compare-motifs -f data/input/ERR15993673_5000.seq.txt --overhead 101 --llm gemini=data/outputs/gemini_patterns.json
+```
+
+It writes `comparison.txt`, `comparison.json` and a LaTeX table (`comparison.tex`) to `--outdir`. TRF, mreps, STREME and HOMER annotate or discover motifs and are not compressors, so the ratio measures how useful their motifs are for substitution, not tool quality.

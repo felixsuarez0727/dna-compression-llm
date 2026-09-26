@@ -1,0 +1,128 @@
+{
+    "!": {
+        "sequence": "CAGTAACTGCCCAGTAACCTGCC",
+        "priority": 1,
+        "count": 11,
+        "potential_savings": 242
+    },
+    "#": {
+        "sequence": "CCCCCCCCCCCC",
+        "priority": 2,
+        "count": 251,
+        "potential_savings": 2761
+    },
+    "$": {
+        "sequence": "CAGTAACCTGCC",
+        "priority": 3,
+        "count": 11,
+        "potential_savings": 121
+    },
+    "%": {
+        "sequence": "CCCCCCCCCCC",
+        "priority": 4,
+        "count": 271,
+        "potential_savings": 2710
+    },
+    "&": {
+        "sequence": "CTCTCCTCTT",
+        "priority": 5,
+        "count": 2207,
+        "potential_savings": 19863
+    },
+    "'": {
+        "sequence": "CCCCCCCCCC",
+        "priority": 6,
+        "count": 292,
+        "potential_savings": 2628
+    },
+    "(": {
+        "sequence": "CCCCCCCCC",
+        "priority": 7,
+        "count": 321,
+        "potential_savings": 2568
+    },
+    ")": {
+        "sequence": "CCTGCACCC",
+        "priority": 8,
+        "count": 61,
+        "potential_savings": 488
+    },
+    "*": {
+        "sequence": "CCCCCCCC",
+        "priority": 9,
+        "count": 359,
+        "potential_savings": 2513
+    },
+    "+": {
+        "sequence": "CCCCCTCC",
+        "priority": 10,
+        "count": 76,
+        "potential_savings": 532
+    },
+    ",": {
+        "sequence": "CCCCCCC",
+        "priority": 11,
+        "count": 424,
+        "potential_savings": 2544
+    },
+    "-": {
+        "sequence": "CCTCCTA",
+        "priority": 12,
+        "count": 28,
+        "potential_savings": 168
+    },
+    ".": {
+        "sequence": "CCCCCC",
+        "priority": 13,
+        "count": 711,
+        "potential_savings": 3555
+    },
+    "/": {
+        "sequence": "CCCCCT",
+        "priority": 14,
+        "count": 555,
+        "potential_savings": 2775
+    },
+    "0": {
+        "sequence": "CTCCT",
+        "priority": 15,
+        "count": 2787,
+        "potential_savings": 11148
+    },
+    "1": {
+        "sequence": "CCTCT",
+        "priority": 16,
+        "count": 2635,
+        "potential_savings": 10540
+    },
+    "2": {
+        "sequence": "CCCCC",
+        "priority": 17,
+        "count": 1821,
+        "potential_savings": 7284
+    },
+    "3": {
+        "sequence": "CCCCT",
+        "priority": 18,
+        "count": 879,
+        "potential_savings": 3516
+    },
+    "4": {
+        "sequence": "CCCC",
+        "priority": 19,
+        "count": 3797,
+        "potential_savings": 11391
+    },
+    "5": {
+        "sequence": "CCC",
+        "priority": 20,
+        "count": 13412,
+        "potential_savings": 26824
+    },
+    "6": {
+        "sequence": "CC",
+        "priority": 21,
+        "count": 93833,
+        "potential_savings": 93833
+    }
+}

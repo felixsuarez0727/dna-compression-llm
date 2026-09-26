@@ -10,6 +10,8 @@ from .detection.pipeline import add_arguments as add_detect_arguments
 from .detection.pipeline import run_detection
 from .fastq import extract_sequences, generate_fastq_file
 from .integrity import sanitized_files_are_equal
+from .motif_tools import TOOLS as MOTIF_TOOLS
+from .motif_tools import run_comparison
 from .overhead import DEFAULT_MAX_OVERHEAD, DEFAULT_TOP_KMERS, run_analysis
 
 
@@ -69,6 +71,37 @@ def _add_analyze_arguments(parser):
     )
 
 
+def _add_compare_motifs_arguments(parser):
+    parser.add_argument("--file", "-f", required=True, help="Input .seq.txt file (one sequence per line)")
+    parser.add_argument("--outdir", "-o", default="data/outputs/motif_comparison", help="Output directory")
+    parser.add_argument(
+        "--tools",
+        nargs="+",
+        default=list(MOTIF_TOOLS),
+        choices=MOTIF_TOOLS,
+        help="Motif tools to run (default: all)",
+    )
+    parser.add_argument("--overhead", type=int, default=101, help="Dictionary overhead used to filter patterns")
+    parser.add_argument("--bin-dir", default=None, help="Directory containing the tool binaries")
+    parser.add_argument(
+        "--llm",
+        nargs="*",
+        default=[],
+        metavar="LABEL=PATTERNS.json",
+        help="Existing LLM pattern dictionaries to include in the table",
+    )
+
+
+def _run_compare_motifs(args):
+    extra = []
+    for item in args.llm:
+        label, _, path = item.partition("=")
+        if not path:
+            raise SystemExit(f"--llm expects LABEL=path, got: {item}")
+        extra.append((label, path))
+    run_comparison(args.file, args.outdir, args.tools, args.overhead, args.bin_dir, extra)
+
+
 def _run_compress(args):
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     log_file = f"{Path(args.output).stem}.compress_log_{timestamp}.txt"
@@ -123,6 +156,11 @@ COMMANDS = {
     "compare": ("Compare sequence files", _add_compare_arguments, _run_compare),
     "benchmark": ("Benchmark standard compressors", _add_benchmark_arguments, _run_benchmark),
     "analyze": ("Analyze pattern dictionary overhead", _add_analyze_arguments, _run_analyze),
+    "compare-motifs": (
+        "Compare external motif tools with LLM dictionaries",
+        _add_compare_motifs_arguments,
+        _run_compare_motifs,
+    ),
 }
 
 
