@@ -51,3 +51,10 @@ def test_extract_sequences_supports_plain_and_gzip_fastq(tmp_path, compressed):
     extract_sequences(input_file, output_file, n=1)
 
     assert output_file.read_text(encoding="utf-8") == "ACGT\n"
+
+def test_extract_sequences_rejects_non_fastq_input(tmp_path):
+    input_file = tmp_path / "reads.fastq"
+    input_file.write_text("ACGT\nTGCA\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="FASTQ header"):
+        extract_sequences(input_file, tmp_path / "out.txt", n=1)

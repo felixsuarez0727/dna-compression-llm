@@ -6,9 +6,10 @@ import sys
 from collections import Counter
 
 
+from .config import TOKEN_BYTES
+
 DEFAULT_MAX_OVERHEAD = 200
 DEFAULT_TOP_KMERS = 20
-TOKEN_BYTES = 3
 
 SAMPLE_JSON_TEMPLATE = {
     "sequence": "",
@@ -53,16 +54,7 @@ def kmer_sizes(kmer_counts):
 
 
 def validate_and_count(pattern: str, sequences: list[str]) -> int:
-    total = 0
-    for sequence in sequences:
-        start = 0
-        while True:
-            position = sequence.find(pattern, start)
-            if position == -1:
-                break
-            total += 1
-            start = position + 1
-    return total
+    return sum(sequence.count(pattern) for sequence in sequences)
 
 
 def find_tandem_unit(sequence: str, max_unit: int = 12):
@@ -184,11 +176,10 @@ def report(
     print(separator)
     print(f"  Total raw bytes in sequence file : {total_raw_bytes:,}")
     print(f"  Token format                     : <X>  ({TOKEN_BYTES} bytes per substitution)")
-    print(f"  Savings formula used             : count × (seq_len - {TOKEN_BYTES})  [corrected]")
-    print("  NOTE: dna-compress detect uses count × (seq_len - 1)  ← underestimates by 2×count bytes")
+    print(f"  Savings formula used             : count × (seq_len - {TOKEN_BYTES})")
     print(f"  Empirical fixed JSON overhead    : {empirical_overhead:.1f} bytes/entry")
     print(f"  ► Recommended --overhead value   : {optimal_overhead}")
-    print("    (default in pattern_detector   : 5)")
+    print("    (default in dna-compress detect: 5)")
     print(separator)
 
     print(
@@ -196,7 +187,7 @@ def report(
     )
     print("-" * 72)
 
-    max_net = max(result["net_savings"] for result in results) if results else 1
+    max_net = max((result["net_savings"] for result in results), default=0)
     for result in results:
         marker = " ◄ OPTIMAL" if result["overhead"] == optimal_overhead else ""
         chart = bar(max(result["net_savings"], 0), max_net, width=20)
@@ -214,7 +205,7 @@ def report(
     print("-" * 72)
     print(
         f"  Each pattern substitution writes <TOKEN> ({TOKEN_BYTES} bytes) in the compressed\n"
-        f"  file, so the real saving per occurrence is (seq_len - {TOKEN_BYTES}), not (seq_len - 1).\n"
+        f"  file, so the real saving per occurrence is (seq_len - {TOKEN_BYTES}).\n"
         "\n"
         f"  overhead={optimal_overhead} keeps the patterns whose corrected savings fully\n"
         f"  cover their real JSON dictionary cost (~{empirical_overhead:.0f} bytes fixed metadata\n"
@@ -222,10 +213,6 @@ def report(
         "\n"
         "  Use it like this:\n"
         f"    dna-compress detect ... --overhead {optimal_overhead}\n"
-        "\n"
-        "  ALSO RECOMMENDED: update optimize_patterns() in the detector:\n"
-        "    Change:  p['potential_savings'] = p['count'] * (seq_len - 1)\n"
-        "    To:      p['potential_savings'] = p['count'] * (seq_len - 3)\n"
     )
     print(separator)
 
@@ -237,6 +224,12 @@ def configure_utf8_stdout():
 
 
 def run_analysis(file_path, max_overhead=DEFAULT_MAX_OVERHEAD, step=5, top=DEFAULT_TOP_KMERS):
+    if step < 1:
+        raise ValueError("--step must be at least 1")
+    if max_overhead < 1:
+        raise ValueError("--max-overhead must be at least 1")
+    if top < 1:
+        raise ValueError("--top must be at least 1")
     configure_utf8_stdout()
     print(f"\nLoading sequences from: {file_path}")
     sequences = load_sequences(file_path)

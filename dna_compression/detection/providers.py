@@ -3,7 +3,7 @@
 from ..config import PROVIDER_DEFAULTS
 
 
-def build_client(provider, api_key, save_log):
+def build_client(provider, api_key, save_log, model_id=None):
     if provider in ("deepseek", "chatgpt"):
         from openai import OpenAI
 
@@ -17,11 +17,11 @@ def build_client(provider, api_key, save_log):
     if provider == "dnabert2":
         from .local_models import load_dnabert2
 
-        return load_dnabert2(PROVIDER_DEFAULTS["dnabert2"], save_log)
+        return load_dnabert2(model_id or PROVIDER_DEFAULTS["dnabert2"], save_log)
     if provider == "hyenadna":
         from .local_models import load_hyenadna
 
-        return load_hyenadna(PROVIDER_DEFAULTS["hyenadna"], save_log)
+        return load_hyenadna(model_id or PROVIDER_DEFAULTS["hyenadna"], save_log)
     raise ValueError(f"Unknown provider: {provider}")
 
 
@@ -40,6 +40,7 @@ def call_llm(client, provider, model_id, system_prompt, user_prompt):
         response = client.models.generate_content(
             model=model_id,
             contents=user_prompt,
+            config={"system_instruction": system_prompt, "temperature": 0},
         )
         return response.text
     raise ValueError(f"Unknown provider: {provider}")

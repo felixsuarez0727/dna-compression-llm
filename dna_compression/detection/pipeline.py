@@ -9,7 +9,14 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from ..config import MICRO_TOKEN_POOL, PROVIDER_DEFAULTS
+from ..config import (
+    LOCAL_PROVIDERS,
+    MICRO_TOKEN_POOL,
+    PROVIDER_DEFAULTS,
+    TOKEN_BYTES,
+    get_logs_dir,
+    resolve_api_key,
+)
 from ..logging_utils import save_log as write_log
 from .local_models import (
     analyze_batch_dnabert2 as run_dnabert2_batch,
@@ -51,7 +58,7 @@ def analyze_synthesis_hyenadna(client, all_candidates, top_kmers):
 
 def parse_seq_sequences(file_path):
     try:
-        with open(file_path, "r") as input_handle:
+        with open(file_path, "r", encoding="utf-8") as input_handle:
             for line in input_handle:
                 sequence = line.strip()
                 if sequence:
@@ -111,16 +118,7 @@ def canonicalize_pattern(sequence):
 
 
 def validate_and_count_pattern(pattern, sequences):
-    total = 0
-    for sequence in sequences:
-        start = 0
-        while True:
-            position = sequence.find(pattern, start)
-            if position == -1:
-                break
-            total += 1
-            start = position + 1
-    return total
+    return sum(sequence.count(pattern) for sequence in sequences)
 
 
 def expand_to_tandem_variants(base_unit, sequences, min_repeats=2, max_repeats=12):
@@ -237,8 +235,8 @@ def token_length_pnn(index):
 def best_token(sequence, count, pnn_index, micro_available):
     sequence_length = len(sequence)
     pnn_token = f"P{pnn_index}"
-    gain_pnn = (sequence_length - len(pnn_token)) * count
-    gain_micro = (sequence_length - 1) * count
+    gain_pnn = (sequence_length - (len(pnn_token) + 2)) * count
+    gain_micro = (sequence_length - TOKEN_BYTES) * count
 
     if micro_available and gain_micro > gain_pnn:
         return micro_available[0], gain_micro, "micro"
@@ -368,12 +366,13 @@ def optimize_patterns(compressor_patterns, dictionary_overhead=5):
 
     for pattern in patterns:
         sequence_length = len(pattern["sequence"])
-        pattern["potential_savings"] = pattern["count"] * (sequence_length - 1)
+        pattern["potential_savings"] = pattern["count"] * (sequence_length - TOKEN_BYTES)
 
     optimized = [
         pattern
         for pattern in patterns
-        if pattern["potential_savings"] > (len(pattern["sequence"]) + dictionary_overhead)
+        if pattern["potential_savings"] > 0
+        and pattern["potential_savings"] > (len(pattern["sequence"]) + dictionary_overhead)
     ]
 
     optimized.sort(
@@ -415,16 +414,20 @@ def save_to_json(data, filename):
 
 
 def run_detection(args):
+    if args.batch_size < 1:
+        raise ValueError("--batch_size must be at least 1")
+    if args.threads < 1:
+        raise ValueError("--threads must be at least 1")
+
     model_id = args.model or PROVIDER_DEFAULTS[args.provider]
-
-    if args.model and args.provider in ("dnabert2", "hyenadna"):
-        PROVIDER_DEFAULTS[args.provider] = args.model
-
-    client = build_client(args.provider, args.key, save_log)
+    api_key = resolve_api_key(args.provider, args.key)
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
     global _LOG_FILE
     _LOG_FILE = f"{Path(args.output).stem}_log_{timestamp}.txt"
+    log_path = get_logs_dir() / _LOG_FILE
+
+    client = build_client(args.provider, api_key, save_log, model_id)
 
     separator = "=" * 56
     save_log(f"\n{separator}")
@@ -436,7 +439,7 @@ def run_detection(args):
     save_log(f"  Overhead   : {args.overhead}")
     if args.provider in ("chatgpt", "deepseek"):
         save_log(f"  Threads    : {args.threads}")
-    save_log(f"  Log file   : data/logs/{_LOG_FILE}")
+    save_log(f"  Log file   : {log_path}")
     save_log(f"  Output     : {args.output}")
     save_log(f"{separator}\n")
 
@@ -465,7 +468,7 @@ def run_detection(args):
             (len(all_batches) + 1, all_sequences[index:index + args.batch_size])
         )
 
-    if args.provider in ("dnabert2", "hyenadna"):
+    if args.provider in LOCAL_PROVIDERS:
         for batch_num, batch in all_batches:
             raw = analyze_batch_with_context(
                 client, args.provider, model_id, batch, batch_num, top_kmers
@@ -482,7 +485,7 @@ def run_detection(args):
         save_log(f"  Using {args.threads} parallel threads for {len(all_batches)} batches...")
 
         def run_batch(batch_num, batch):
-            thread_client = build_client(args.provider, args.key, save_log)
+            thread_client = build_client(args.provider, api_key, save_log, model_id)
             raw = analyze_batch_with_context(
                 thread_client, args.provider, model_id, batch, batch_num, top_kmers
             )
@@ -580,7 +583,7 @@ def run_detection(args):
     save_log("ANALYSIS COMPLETE")
     save_log(f"Final patterns: {len(final_patterns)}")
     save_log(f"Saved to: {args.output}")
-    save_log(f"Log saved to: data/logs/{_LOG_FILE}")
+    save_log(f"Log saved to: {log_path}")
     save_log(f"{separator}")
 
 
@@ -589,8 +592,12 @@ def add_arguments(parser):
     parser.add_argument(
         "--key",
         "-k",
-        default="local",
-        help="API key for the selected provider (not required for dnabert2/hyenadna)",
+        default=None,
+        help=(
+            "API key for hosted providers. Prefer the OPENAI_API_KEY, DEEPSEEK_API_KEY "
+            "or GEMINI_API_KEY environment variables so the key does not end up in "
+            "your shell history. Not used by dnabert2/hyenadna."
+        ),
     )
     parser.add_argument(
         "--provider",
@@ -613,7 +620,10 @@ def add_arguments(parser):
         "--overhead",
         type=int,
         default=5,
-        help="Dictionary entry cost in bytes for final optimization (default: 5)",
+        help=(
+            "Dictionary entry cost in bytes for final optimization (default: 5). "
+            "Run 'dna-compress analyze' to estimate a value for your data."
+        ),
     )
     parser.add_argument("--no_validate", action="store_true", help="Disable validation against real sequences")
     parser.add_argument("--no_expand", action="store_true", help="Disable tandem repeat expansion")

@@ -1,6 +1,8 @@
 """Command-line entry point for DNA compression workflows."""
 
 import argparse
+import json
+import sys
 import time
 from pathlib import Path
 
@@ -142,7 +144,11 @@ def main(argv=None):
     if not hasattr(args, "handler"):
         parser.print_help()
         return
-    args.handler(args)
+    try:
+        args.handler(args)
+    except (FileNotFoundError, IsADirectoryError, json.JSONDecodeError, ValueError) as error:
+        print(f"Error: {error}", file=sys.stderr)
+        raise SystemExit(1) from None
 
 
 if __name__ == "__main__":

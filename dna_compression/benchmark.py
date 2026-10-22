@@ -31,15 +31,18 @@ def benchmark_file(path):
         data = input_handle.read()
 
     original = len(data)
+    if original == 0:
+        print(f"File is empty: {path}")
+        return False
     print(f"\nInput file : {path}")
     print(f"Original   : {human(original)} ({original:,} bytes)")
     print(f"\n{'Method':<10} {'Output':>10} {'Ratio':>10} {'Time':>8}")
     print("-" * 44)
 
     for name, compressor in COMPRESSORS:
-        start_time = time.time()
+        start_time = time.perf_counter()
         compressed = compressor(data)
-        elapsed = time.time() - start_time
+        elapsed = time.perf_counter() - start_time
         size = len(compressed)
         ratio = 100 * (1 - size / original)
         print(f"{name:<10} {human(size):>10} {ratio:>9.2f}%  {elapsed:>6.2f}s")

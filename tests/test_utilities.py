@@ -36,11 +36,12 @@ def test_human_formats_binary_units():
     assert human(1024 * 1024) == "1.0 MB"
 
 
-def test_overhead_kmers_and_overlapping_pattern_count():
+def test_overhead_kmers_and_non_overlapping_pattern_count():
     top_kmers = compute_top_kmers(["ATAT", "ATAT"], k_sizes=(2,), top_n=2)
 
     assert top_kmers[2] == [("AT", 4), ("TA", 2)]
-    assert validate_and_count("ATA", ["ATATA"]) == 2
+    assert validate_and_count("ATA", ["ATATA"]) == 1
+    assert validate_and_count("ATAT", ["ATATATATAT"]) == 2
     assert find_tandem_unit("ATCGATCG") == ("ATCG", 2)
 
 
@@ -51,3 +52,9 @@ def test_simulate_overhead_uses_token_cost_and_json_cost():
     assert result["gross_savings"] == 15
     assert result["dict_cost"] == measure_json_entry_bytes(8)
     assert result["net_savings"] == result["gross_savings"] - result["dict_cost"]
+
+def test_benchmark_handles_an_empty_file(tmp_path):
+    empty_file = tmp_path / "empty.seq.txt"
+    empty_file.write_bytes(b"")
+
+    assert not benchmark_file(empty_file)

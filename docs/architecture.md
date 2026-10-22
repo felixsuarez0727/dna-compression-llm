@@ -53,7 +53,7 @@ adapters, and a simulated detection run. No API key, model download, or Docker
 daemon is required.
 
 GitHub Actions runs `uv lock --check`, synchronizes the test group, executes
-pytest, and builds the package on Python 3.10 and 3.11 for Linux and Windows.
+pytest, and builds the package on Python 3.10 for Linux.
 
 ## Artifacts
 
@@ -78,11 +78,15 @@ the Docker image sets it to `/data/logs` so logs persist in the mounted volume.
 
 - Pattern detection uses its existing batching, prompts, validation, phase
   deduplication, and token allocation logic.
+- `compress`/`decompress` are byte-for-byte lossless: only the line
+  terminator is separated from each line; blank lines and whitespace are kept.
+  Tokens may not contain `<`/`>` and later patterns never rewrite markers
+  inserted by earlier ones.
+- The detector and `analyze` share one cost model: savings are
+  `count × (seq_len - 3)` with non-overlapping counts (`TOKEN_BYTES` in
+  `config.py`).
 - `compare` ignores blank lines and leading/trailing whitespace, as did the
   original checker. It is not a byte-for-byte validator.
-- The detector estimates savings with `seq_len - 1`; overhead analysis uses
-  `seq_len - 3` for its `<X>` token model. Resolving that discrepancy is a
-  separate algorithmic change.
 - Local models use CUDA when `torch.cuda.is_available()` and fall back to CPU
   when CUDA is unavailable or model placement fails. Docker must receive
   `--gpus all` before an NVIDIA GPU is visible to the container.

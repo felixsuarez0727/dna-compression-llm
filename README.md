@@ -196,6 +196,20 @@ the SHA-256 comparison above is the strict losslessness check.
 | `dnabert2` | `local-models` | Not required | `zhihan1996/DNABERT-2-117M` |
 | `hyenadna` | `local-models` | Not required | `LongSafari/hyenadna-large-1m-seqlen-hf` |
 
+Hosted providers read their API key from an environment variable, which keeps
+the key out of your shell history. `--key` still works and takes precedence.
+
+| Provider | Environment variable |
+| --- | --- |
+| `chatgpt` | `OPENAI_API_KEY` |
+| `deepseek` | `DEEPSEEK_API_KEY` |
+| `gemini` | `GEMINI_API_KEY` |
+
+```powershell
+$env:GEMINI_API_KEY = "your-key"
+uv run dna-compress detect -f .\data\runs\ERR15993673_5000.seq.txt -p gemini
+```
+
 Local models download their weights the first time they run. DNABERT-2 and
 HyenaDNA retain their existing `trust_remote_code=True` behavior, so use the
 locked optional environment supplied by this repository.
@@ -247,7 +261,12 @@ known scope boundaries.
 - Hosted model output can vary over time, even when a temperature setting is
   fixed. Once a pattern JSON is saved, compression and decompression are
   deterministic.
-- The detector's savings estimate and the overhead diagnostic use different
-  token-cost assumptions.
+- Each substitution is written as `<X>` (3 bytes). The detector and the
+  `analyze` diagnostic both estimate savings as `count × (seq_len - 3)` using
+  non-overlapping occurrence counts, so patterns that would make the file
+  larger are discarded.
+- `compress` is byte-for-byte lossless, including blank lines, surrounding
+  whitespace and line endings. Input lines must not contain `<` or `>`,
+  which are reserved for tokens; the command stops with an error if they do.
 - The bundled test data is from `ERR15993673`, a raw metagenomic sequencing
   data set from a human vaginal sample in the NCBI Trace Archive.

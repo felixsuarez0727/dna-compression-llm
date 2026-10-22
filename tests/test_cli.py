@@ -89,3 +89,15 @@ def test_compare_command_reports_normalized_equality(tmp_path, capsys):
     cli.main(["compare", str(first_file), str(second_file)])
 
     assert "The files are equal" in capsys.readouterr().out
+
+def test_cli_reports_missing_files_without_a_traceback(tmp_path, capsys):
+    missing = tmp_path / "missing.json"
+
+    try:
+        cli.main(["compress", "-i", str(missing), "-p", str(missing), "-o", str(tmp_path / "o")])
+    except SystemExit as exit_info:
+        assert exit_info.code == 1
+    else:
+        raise AssertionError("expected SystemExit")
+
+    assert "Error:" in capsys.readouterr().err

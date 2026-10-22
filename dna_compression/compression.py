@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from .logging_utils import save_log
-from .pattern_store import load_sorted_patterns, load_token_map
+from .pattern_store import TOKEN_CLOSE, TOKEN_OPEN, load_sorted_patterns, load_token_map
 
 
 def load_compression_patterns(pattern_file, log_file):
@@ -12,27 +12,40 @@ def load_compression_patterns(pattern_file, log_file):
     return sorted_patterns
 
 
-def load_decompression_patterns(pattern_file):
+def load_decompression_patterns(pattern_file, log_file=None):
     token_map = load_token_map(pattern_file)
-    print(f"Loaded {len(token_map)} patterns")
+    save_log(f"Loaded {len(token_map)} patterns", filename=log_file)
     return token_map
 
 
 def tokenize_sequence(sequence, sorted_patterns):
+    segments = [(False, sequence)]
     for token, data in sorted_patterns:
         pattern = data["sequence"]
-        sequence = sequence.replace(pattern, f"<{token}>")
-    return sequence
+        marker = f"{TOKEN_OPEN}{token}{TOKEN_CLOSE}"
+        updated = []
+        for is_marker, text in segments:
+            if is_marker or pattern not in text:
+                updated.append((is_marker, text))
+                continue
+            parts = text.split(pattern)
+            for index, part in enumerate(parts):
+                if index:
+                    updated.append((True, marker))
+                if part:
+                    updated.append((False, part))
+        segments = updated
+    return "".join(text for _, text in segments)
 
 
 def expand_sequence(tokenized_seq, token_map):
-    result = ""
+    parts = []
     index = 0
     length = len(tokenized_seq)
 
     while index < length:
-        if tokenized_seq[index] == "<":
-            token_end = tokenized_seq.find(">", index)
+        if tokenized_seq[index] == TOKEN_OPEN:
+            token_end = tokenized_seq.find(TOKEN_CLOSE, index)
             if token_end == -1:
                 raise ValueError("Malformed token")
 
@@ -40,13 +53,16 @@ def expand_sequence(tokenized_seq, token_map):
             if token not in token_map:
                 raise ValueError(f"Unknown token: {token}")
 
-            result += token_map[token]
+            parts.append(token_map[token])
             index = token_end + 1
         else:
-            result += tokenized_seq[index]
-            index += 1
+            next_token = tokenized_seq.find(TOKEN_OPEN, index)
+            if next_token == -1:
+                next_token = length
+            parts.append(tokenized_seq[index:next_token])
+            index = next_token
 
-    return result
+    return "".join(parts)
 
 
 def line_ending(line):
@@ -55,6 +71,12 @@ def line_ending(line):
     if line.endswith(("\n", "\r")):
         return line[-1]
     return ""
+
+
+def split_line(line):
+    ending = line_ending(line)
+    content = line[: len(line) - len(ending)] if ending else line
+    return content, ending
 
 
 def compress_seq(input_file, pattern_file, output_file, log_file):
@@ -67,14 +89,18 @@ def compress_seq(input_file, pattern_file, output_file, log_file):
     with open(input_file, "r", encoding="utf-8", newline="") as input_handle, open(
         output_file, "w", encoding="utf-8", newline=""
     ) as output_handle:
-        for line in input_handle:
-            sequence = line.strip()
-            if not sequence:
-                continue
+        for line_number, line in enumerate(input_handle, start=1):
+            content, ending = split_line(line)
+            if TOKEN_OPEN in content or TOKEN_CLOSE in content:
+                raise ValueError(
+                    f"{input_file}, line {line_number}: input contains the reserved "
+                    f"characters '{TOKEN_OPEN}' or '{TOKEN_CLOSE}' and cannot be "
+                    "compressed losslessly"
+                )
 
-            tokenized = tokenize_sequence(sequence, sorted_patterns)
-            output_handle.write(tokenized + line_ending(line))
-            total += 1
+            output_handle.write(tokenize_sequence(content, sorted_patterns) + ending)
+            if content.strip():
+                total += 1
 
     original_size = Path(input_file).stat().st_size
     compressed_size = Path(output_file).stat().st_size
@@ -87,7 +113,7 @@ def compress_seq(input_file, pattern_file, output_file, log_file):
 
 
 def decompress_seq(input_file, pattern_file, output_file, log_file):
-    token_map = load_decompression_patterns(pattern_file)
+    token_map = load_decompression_patterns(pattern_file, log_file)
 
     save_log(f"Decompressing: {input_file}", filename=log_file)
     total = 0
@@ -97,13 +123,10 @@ def decompress_seq(input_file, pattern_file, output_file, log_file):
         output_file, "w", encoding="utf-8", newline=""
     ) as output_handle:
         for line in input_handle:
-            tokenized = line.strip()
-            if not tokenized:
-                continue
-
-            restored = expand_sequence(tokenized, token_map)
-            output_handle.write(restored + line_ending(line))
-            total += 1
+            content, ending = split_line(line)
+            output_handle.write(expand_sequence(content, token_map) + ending)
+            if content.strip():
+                total += 1
 
     save_log("\nDecompression completed", filename=log_file)
     save_log(f"Sequences restored : {total}", filename=log_file)

@@ -19,6 +19,8 @@ COMMON_PATTERNS = [
 
 
 def extract_sequences(fastq_file, output_file, n):
+    if n < 1:
+        raise ValueError("--n must be at least 1")
     input_path = Path(fastq_file)
     output_path = Path(output_file)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -33,9 +35,18 @@ def extract_sequences(fastq_file, output_file, n):
             header = input_handle.readline()
             if not header:
                 break
+            if not header.strip():
+                continue
+            if not header.startswith("@"):
+                raise ValueError(
+                    f"{fastq_file}: expected a FASTQ header starting with '@', "
+                    f"got {header.strip()[:40]!r}"
+                )
             sequence = input_handle.readline().strip()
-            input_handle.readline()
-            input_handle.readline()
+            separator = input_handle.readline()
+            quality = input_handle.readline()
+            if not separator.startswith("+") or not quality:
+                raise ValueError(f"{fastq_file}: truncated FASTQ record {header.strip()!r}")
             output_handle.write(sequence + "\n")
             count += 1
     print(f"Process Ended: Extracted {count} sequences to {output_file}")
@@ -68,7 +79,7 @@ def generate_fastq_file(output_file, num_sequences=1000, seq_length=100):
 
     Path(output_file).parent.mkdir(parents=True, exist_ok=True)
 
-    with open(output_file, "w") as output_handle:
+    with open(output_file, "w", encoding="utf-8") as output_handle:
         for sequence_number in range(1, num_sequences + 1):
             fastq_entry = generate_sequence(sequence_number, seq_length)
             output_handle.write(fastq_entry)

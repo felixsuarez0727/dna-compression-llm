@@ -38,10 +38,14 @@ def test_call_llm_uses_gemini_request_shape():
 
     client = SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
 
-    response = call_llm(client, "gemini", "gemini-test", "unused", "prompt")
+    response = call_llm(client, "gemini", "gemini-test", "system", "prompt")
 
     assert response == "GGGG:4"
-    assert captured == {"model": "gemini-test", "contents": "prompt"}
+    assert captured == {
+        "model": "gemini-test",
+        "contents": "prompt",
+        "config": {"system_instruction": "system", "temperature": 0},
+    }
 
 
 @pytest.mark.parametrize("function", [build_client, call_llm])
